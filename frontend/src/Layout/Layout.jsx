@@ -4,12 +4,16 @@ import MyNavbar from './Components/MyNavbar';
 
 const Layout = ({ Maincontent }) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-stone-800">
       <MyNavbar />
       <div className="flex flex-1">
         <SideBar />
-        <div className="flex-1">
-          <Maincontent />
+        <div className="flex-1 border-l-4 border-l-stone-700 bg-cover bg-center" style={{ backgroundImage: 'url("bg-whole.png")' }}>
+          
+          <div className=' backdrop-blur-sm'>
+            <Maincontent />
+          </div>
+          
         </div>
       </div>
     </div>

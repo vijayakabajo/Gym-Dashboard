@@ -47,13 +47,13 @@ const AddCustomer = () => {
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("There was an error submitting the data. Please try again.");
+      alert(`Error submitting the data: Make Sure The Email/Phone N0. is unique (${error.message})`);
     }
   };
 
   return (
-    <div className="bg-fadewhite h-screen ml-1 p-10">
-      <div className="max-h-screen bg-gray-100 p-8">
+    <div className="h-screen ml-1 p-10">
+      <div className="max-h-screen text-white bg-stone-700 bg-opacity-50 rounded-lg p-8">
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicName">
             <Form.Label>Full Name</Form.Label>

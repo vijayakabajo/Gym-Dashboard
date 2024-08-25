@@ -15,8 +15,28 @@ exports.createEmployee = async (req, res) => {
 // Get all employees
 exports.getAllEmployees = async (req, res) => {
   try {
-    const employees = await Employee.find();
-    res.status(200).json(employees);
+    const { search, filter } = req.query;
+    const query = {};
+
+    // Search
+    if (search) {
+      query.$or = [
+        { fullname: { $regex: search, $options: "i" } },
+        { emailId: { $regex: search, $options: "i" } },
+        { mobileNumber: { $regex: search, $options: "i" } },
+        { address: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Filter
+    if (filter === "last7Days") {
+      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 7)) };
+    } else if (filter === "last30Days") {
+      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) };
+    }
+
+    const employee = await Employee.find(query);
+    res.status(200).json(employee);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

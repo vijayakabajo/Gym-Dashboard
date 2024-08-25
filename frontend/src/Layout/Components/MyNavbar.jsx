@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import Dropdown from "react-bootstrap/Dropdown";
 import { jwtDecode } from "jwt-decode";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const MyNavbar = () => {
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const handleLogout = () => {
     if (localStorage.removeItem("token")) {
       localStorage.removeItem("token");
@@ -26,13 +26,13 @@ const MyNavbar = () => {
   }, []);
 
   return (
-    <nav className="flex justify-between items-center bg-[#574898] px-6 py-2">
+    <nav className="flex justify-between items-center bg-[#574898] px-6 py-2 min-w-96">
       <div className="flex items-center">
         {/* <a className="font-[600] text-[2rem]">beenaIT</a> */}
-        
-          <img src="/Logo.png" alt="Logo" className="h-12" />
-        
-{/* 
+
+        <img src="/Logo.png" alt="Logo" className="h-12 animate-pulse ripple" />
+
+        {/* 
         <a className="ml-16">
           <p className="text-[1.8rem] text-black font-[700]">
             Welcome, <span className="text-white font-[400]">{userName} ({role})</span>
@@ -44,23 +44,29 @@ const MyNavbar = () => {
         <Dropdown.Toggle
           as="a"
           id="dropdown-basic"
-          className="p-0 m-0 flex items-center  text-white"
+          className="p-0 m-0 flex items-center cursor-pointer text-white"
           style={{ backgroundColor: "transparent", border: "none" }}
         >
-          <CgProfile size={30} className="cursor-pointer text-white mr-2 capitalize" />
-          <p>{userName} ({role})</p>
+          <div className="rounded-full overflow-hidden mr-2">
+            <img src="/personal-trainer.gif" alt="Description of GIF" className="h-7" />
+          </div>
+          {/* <CgProfile size={30} className="cursor-pointer text-white mr-2 capitalize" /> */}
+          <p>
+            {userName} ({role})
+          </p>
         </Dropdown.Toggle>
 
-        
-
-        <Dropdown.Menu>
-          <Dropdown.Item href="#/action-1" className="hover:bg-sky-100 ml-1"
-          onClick={()=>navigate("/profile")}>
+        <Dropdown.Menu className="bg-[#574898] ml-8 mt-1">
+          <Dropdown.Item
+            href="#/action-1"
+            className="hover:bg-stone-800 hover:bg-opacity-10 text-white"
+            onClick={() => navigate("/profile")}
+          >
             Profile
           </Dropdown.Item>
           <Dropdown.Item
             href="#/action-2"
-            className="hover:bg-sky-100"
+            className="hover:bg-stone-800 hover:bg-opacity-10 text-white"
             onClick={handleLogout}
           >
             Sign Out

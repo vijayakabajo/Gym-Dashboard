@@ -15,6 +15,7 @@ const employeeSchema = new mongoose.Schema(
     mobileNumber: {
       type: String,
       required: true,
+      unique: true, // Make mobileNumber unique
     },
     address: {
       type: String,

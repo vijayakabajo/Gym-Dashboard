@@ -6,8 +6,8 @@ import { MdAttachMoney } from "react-icons/md";
 
 const DashBoard = () => {
   return (
-    <div className="bg-fadewhite ml-1 p-10">
-      <div className="min-h-screen bg-gray-100 p-8">
+    <div className="">
+      <div className="h-svh bg-gray-100 p-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <Item data={{
                 img: RiCustomerService2Line,

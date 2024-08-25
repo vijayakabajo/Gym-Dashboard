@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom"
 const Item = (props) => {
 const navigate = useNavigate();
   return (
-    <div className="bg-white shadow-lg rounded-lg pl-2 py-6 pr-4 flex flex-col items-center">
+    <div className="bg-stone-700 bg-opacity-70  text-white shadow-lg rounded-lg pl-2 py-6 pr-4 flex flex-col items-center">
       <div className="bg-blue-500 p-4 rounded-full">
         <props.data.img className="w-20 h-20"/>
       </div>
@@ -13,7 +13,7 @@ const navigate = useNavigate();
         <p className="text-gray-600">Manage all your {props.data.name}</p>
       </div>
 
-      <button className="py-2 px-3 mt-2 rounded-lg bg-sky-100 hover:bg-sky-200" onClick={()=>navigate(props.data.redirectURL)}>
+      <button className="py-2 px-3 mt-2 rounded-lg bg-stone-500 hover:bg-opacity-90 bg-opacity-40" onClick={()=>navigate(props.data.redirectURL)}>
         {
             (props.data.name==="Revenue")?<>Show Total Revenue</>:
             <>

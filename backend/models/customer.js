@@ -14,6 +14,7 @@ const customerSchema = new mongoose.Schema(
     mobileNumber: {
       type: String,
       required: true,
+      unique: true,
     },
     address:{
       type: String,
@@ -23,7 +24,7 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    assignedEmployees: [
+    assignedEmployees: [          //array of employees
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Employee",

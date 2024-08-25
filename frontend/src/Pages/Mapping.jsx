@@ -7,7 +7,7 @@ import Select from "react-select";
 const Mapping = () => {
   const [employees, setEmployees] = useState([]);
   const [customers, setCustomers] = useState([]);
-  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -34,13 +34,13 @@ const Mapping = () => {
     // Map the customer to the employee
     axios.post("http://localhost:8000/api/employee/assign", {
       customerId: selectedCustomer.value,
-      employeeId: selectedEmployee
+      employeeId: selectedEmployee.value
     })
       .then((response) => {
         setSuccessMessage(response.data.message);
         setErrorMessage("");
         // Reset selections
-        setSelectedEmployee("");
+        setSelectedEmployee(null);
         setSelectedCustomer(null);
       })
       .catch((error) => {
@@ -58,19 +58,17 @@ const Mapping = () => {
       <div className="max-h-screen bg-gray-100 p-8">
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formEmployeeSelect">
-            <Form.Label>Select Employee</Form.Label>
-            <Form.Control
-              as="select"
+            <Form.Label>Search and Select Employee</Form.Label>
+            <Select
               value={selectedEmployee}
-              onChange={(e) => setSelectedEmployee(e.target.value)}
-            >
-              <option value="">-- Select Employee --</option>
-              {employees.map((employee) => (
-                <option key={employee._id} value={employee._id}>
-                  {employee.fullname} (Phone Number: {employee.mobileNumber})
-                </option>
-              ))}
-            </Form.Control>
+              onChange={setSelectedEmployee}
+              options={employees.map((employee) => ({
+                value: employee._id,
+                label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`
+              }))}
+              placeholder="Search and select an employee"
+              isSearchable
+            />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formCustomerSelect">

@@ -18,7 +18,18 @@ const RevenuePage = () => {
     <div className="min-h-screen bg-gray-100 p-8">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Monthly Revenue</h1>
+      <div className="flex justify-center items-center gap-x-2">
+            <div className="rounded-full overflow-hidden mr-2">
+              <img
+                src="calendar.gif"
+                alt="Description of GIF"
+                className="h-9"
+              />
+            </div>
+
+            <h1 className="text-3xl font-bold text-white">Monthly Revenue</h1>
+          </div>
+       
         <div className="flex items-center space-x-4">
           <DatePicker
             selected={startDate}
@@ -28,7 +39,7 @@ const RevenuePage = () => {
           />
           <Menu as="div" className="relative">
             <div>
-              <Menu.Button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-gray-300">
+              <Menu.Button className="px-4 py-2 rounded-lg flex items-center space-x-2 bg-stone-200">
                 <span>Filter By Date</span>
                 <ChevronDownIcon className="w-5 h-5" />
               </Menu.Button>
@@ -75,13 +86,13 @@ const RevenuePage = () => {
       </div>
 
       {/* Total Revenue Section */}
-      <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+      <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6">
         <h2 className="text-2xl font-bold">Total Monthly Revenue</h2>
         <p className="text-4xl text-green-500 mt-2">${totalRevenue.toLocaleString()}</p>
       </div>
 
       {/* Revenue Table Section */}
-      <div className="bg-white shadow-lg rounded-lg overflow-x-auto">
+      <div className="bg-stone-700 bg-opacity-50 text-white shadow-lg rounded-lg overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -96,7 +107,7 @@ const RevenuePage = () => {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-stone-700 bg-opacity-50 divide-y divide-gray-200">
             {revenueData.map((data, index) => (
               <tr key={index}>
                 <td className="px-6 py-4 whitespace-nowrap">{data.customer}</td>
