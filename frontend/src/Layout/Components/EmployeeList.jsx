@@ -1,7 +1,6 @@
-// components/EmployeeList.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Modal from "./Modal";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,18 +9,29 @@ const EmployeeList = ({ searchQuery, filter }) => {
   const [employees, setEmployees] = useState([]);
   const [role, setRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployeeCustomers, setSelectedEmployeeCustomers] = useState([]);
+  const [selectedEmployeeCustomers, setSelectedEmployeeCustomers] = useState(
+    []
+  );
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
+  const [page, setPage] = useState(1); // State for the current page
+  const [totalPages, setTotalPages] = useState(1); // State for the total number of pages
+  const limit = 7; // Items per page
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/employee", {
-          params: { search: searchQuery, filter: filter },
+          params: {
+            search: searchQuery,
+            filter: filter,
+            page: page,
+            limit: limit,
+          },
         });
-        setEmployees(response.data.reverse());
+        setEmployees(response.data.employees.reverse());
+        setTotalPages(Math.ceil(response.data.total / limit)); // Calculate total pages based on response
       } catch (error) {
         console.error("Error fetching employee data:", error);
         toast.error("Failed to fetch employees.");
@@ -29,7 +39,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
     };
 
     fetchEmployees();
-  }, [searchQuery, filter]);
+  }, [searchQuery, filter, page]); // Include 'page' in the dependency array
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -46,11 +56,12 @@ const EmployeeList = ({ searchQuery, filter }) => {
 
   const handleDelete = async (id) => {
     if (role !== "admin") {
-      toast.error("You do not have permission to delete employees.");
+      alert("You do not have permission to delete employees.");
       return;
     }
 
-    if (!window.confirm("Are you sure you want to delete this employee?")) return;
+    if (!window.confirm("Are you sure you want to delete this employee?"))
+      return;
 
     try {
       await axios.delete(`http://localhost:8000/api/employee/${id}`);
@@ -66,27 +77,23 @@ const EmployeeList = ({ searchQuery, filter }) => {
     setLoadingCustomers(true);
     setSelectedEmployeeName(employee.fullname);
     try {
-        const response = await axios.get(
-            `http://localhost:8000/api/employee/${employee._id}/customers`
-        );
-        
-        // If the request is successful, set the customers data
-        setSelectedEmployeeCustomers(response.data);
-    } catch (error) {
-        if (error.response && error.response.status === 404) {
-            // Handle 404 status code (No customers assigned)
-            setSelectedEmployeeCustomers([]);
-        } else {
-            // Handle other errors
-            console.error("Error fetching customers:", error);
-            toast.error("Failed to fetch customers.");
-        }
-    } finally {
-        setIsModalOpen(true);
-        setLoadingCustomers(false);
-    }
-};
+      const response = await axios.get(
+        `http://localhost:8000/api/employee/${employee._id}/customers`
+      );
 
+      setSelectedEmployeeCustomers(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setSelectedEmployeeCustomers([]);
+      } else {
+        console.error("Error fetching customers:", error);
+        toast.error("Failed to fetch customers.");
+      }
+    } finally {
+      setIsModalOpen(true);
+      setLoadingCustomers(false);
+    }
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -103,10 +110,14 @@ const EmployeeList = ({ searchQuery, filter }) => {
     setSelectedCustomer(customer || null);
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden">
+    <div className="shadow-lg rounded-lg overflow-hidden h-auto">
       <div className="overflow-x-auto">
-        <table className="min-w-fit divide-y divide-gray-200">
+        <table className="w-full divide-y divide-gray-200">
           <thead className="bg-[#574898] text-white">
             <tr>
               <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
@@ -181,11 +192,8 @@ const EmployeeList = ({ searchQuery, filter }) => {
                   <td className="px-3 py-2 whitespace-nowrap">
                     <button
                       onClick={() => handleDelete(employee._id)}
-                      className={`bg-red-500 text-white text-sm px-3 py-2 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
-                        role !== "admin" ? "cursor-not-allowed opacity-50" : ""
-                      }`}
-                      disabled={role !== "admin"}
-                      title="Delete Employee"
+                      className="bg-red-600 text-white text-sm px-3 py-2 rounded-lg hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      title={`Delete ${employee.fullname}`}
                     >
                       Delete
                     </button>
@@ -194,7 +202,10 @@ const EmployeeList = ({ searchQuery, filter }) => {
               ))
             ) : (
               <tr>
-                <td className="px-6 py-4 text-center" colSpan="8">
+                <td
+                  colSpan="8"
+                  className="px-3 py-2 text-center text-base font-medium text-red-600"
+                >
                   No employees found.
                 </td>
               </tr>
@@ -203,8 +214,35 @@ const EmployeeList = ({ searchQuery, filter }) => {
         </table>
       </div>
 
-      {/* Modal for displaying customers */}
-      <Modal isOpen={isModalOpen} closeModal={closeModal}>
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={() => handlePageChange(page - 1)}
+          disabled={page === 1}
+          className={`px-3 py-2 mx-1 rounded-lg text-white ${
+            page === 1 ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-800"
+          }`}
+        >
+          Previous
+        </button>
+        <span className="px-3 py-2 text-lg font-medium text-white">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(page + 1)}
+          disabled={page === totalPages}
+          className={`px-3 py-2 mx-1 rounded-lg text-white ${
+            page === totalPages
+              ? "bg-gray-400"
+              : "bg-blue-600 hover:bg-blue-800"
+          }`}
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Modal for displaying employee's customers */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
         {loadingCustomers ? (
           <div className="flex justify-center items-center h-64">
             <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
@@ -216,7 +254,11 @@ const EmployeeList = ({ searchQuery, filter }) => {
                 {selectedEmployeeName}'s Customers
               </h1>
               <div className="rounded-full overflow-hidden">
-                <img src="/gymmm.gif" alt="gif" className="h-36 w-36 object-cover" />
+                <img
+                  src="/gymmm.gif"
+                  alt="gif"
+                  className="h-36 w-36 object-cover"
+                />
               </div>
             </div>
             <div className="space-y-3">

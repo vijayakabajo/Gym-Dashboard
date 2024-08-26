@@ -1,5 +1,5 @@
 const Customer = require("../models/customer");
-const Employee = require("../models/employee")
+const Employee = require("../models/employee");
 
 // Create a new customer
 exports.createCustomer = async (req, res) => {

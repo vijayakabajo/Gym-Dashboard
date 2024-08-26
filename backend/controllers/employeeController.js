@@ -13,9 +13,10 @@ exports.createEmployee = async (req, res) => {
 };
 
 // Get all employees
+// Get all employees with pagination, search, and filter
 exports.getAllEmployees = async (req, res) => {
   try {
-    const { search, filter } = req.query;
+    const { search, filter, page = 1, limit = 8, all } = req.query;
     const query = {};
 
     // Search
@@ -30,17 +31,48 @@ exports.getAllEmployees = async (req, res) => {
 
     // Filter
     if (filter === "last7Days") {
-      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 7)) };
+      query.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      };
     } else if (filter === "last30Days") {
-      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) };
+      query.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+      };
     }
 
-    const employee = await Employee.find(query);
-    res.status(200).json(employee);
+    if (all === 'true') {
+      // Fetch all employees that match the query without pagination
+      const employees = await Employee.find(query);
+      res.status(200).json({
+        employees,
+        total: employees.length,
+        page: 1, // Placeholder value
+        pages: 1, // Placeholder value
+      });
+    } else {
+      // Pagination
+      const pageNum = parseInt(page, 10);
+      const limitNum = parseInt(limit, 10);
+      const skip = (pageNum - 1) * limitNum;
+
+      const [employees, totalEmployees] = await Promise.all([
+        Employee.find(query).skip(skip).limit(limitNum),
+        Employee.countDocuments(query),
+      ]);
+
+      res.status(200).json({
+        employees,
+        total: totalEmployees,
+        page: pageNum,
+        pages: Math.ceil(totalEmployees / limitNum),
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 // Get an employee by ID
 exports.getEmployeeById = async (req, res) => {

@@ -35,7 +35,7 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div className="flex flex-row justify-around items-center w-full h-screen">
+    <div className="flex flex-col md:flex-row justify-around space-y-4 md:space-y-0 py-3 items-center">
       <div className=" bg-stone-700 bg-opacity-50 px-16 py-4 rounded-lg">
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-white font-serif text-3xl mb-3 font-semibold">My Details</h1>

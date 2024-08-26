@@ -7,10 +7,13 @@ const Layout = ({ Maincontent }) => {
     <div className="flex flex-col min-h-screen bg-stone-800">
       <MyNavbar />
       <div className="flex flex-1">
-        <SideBar />
-        <div className="flex-1 border-l-4 border-l-stone-700 bg-cover bg-center" style={{ backgroundImage: 'url("bg-whole.png")' }}>
+        <div className='hidden md:block'>
+           <SideBar/>
+        </div>
+       
+        <div className="flex-1 border-l-4 border-l-stone-700 bg-cover bg-center bg-stone-800" style={{ backgroundImage: 'url("bg-whole.png")' }}>
           
-          <div className=' backdrop-blur-sm'>
+          <div className='backdrop-blur-sm'>
             <Maincontent />
           </div>
           

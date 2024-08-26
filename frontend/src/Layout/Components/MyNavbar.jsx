@@ -26,7 +26,7 @@ const MyNavbar = () => {
   }, []);
 
   return (
-    <nav className="flex justify-between items-center bg-[#574898] px-6 py-2 min-w-96">
+    <nav className="flex justify-between items-center bg-[#574898] px-6 py-2">
       <div className="flex items-center">
         {/* <a className="font-[600] text-[2rem]">beenaIT</a> */}
 
@@ -48,15 +48,26 @@ const MyNavbar = () => {
           style={{ backgroundColor: "transparent", border: "none" }}
         >
           <div className="rounded-full overflow-hidden mr-2">
-            <img src="/personal-trainer.gif" alt="Description of GIF" className="h-7" />
+            <img
+              src="/personal-trainer.gif"
+              alt="Description of GIF"
+              className="h-7"
+            />
           </div>
           {/* <CgProfile size={30} className="cursor-pointer text-white mr-2 capitalize" /> */}
-          <p>
+          <p className="hidden md:block">
             {userName} ({role})
           </p>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="bg-[#574898] mt-1">
+          <Dropdown.Item
+            href="#/action-1"
+            className="hover:bg-stone-800 hover:bg-opacity-10 text-white block md:hidden"
+            onClick={() => navigate("/")}
+          >
+            DASHBOARD
+          </Dropdown.Item>
           <Dropdown.Item
             href="#/action-1"
             className="hover:bg-stone-800 hover:bg-opacity-10 text-white"

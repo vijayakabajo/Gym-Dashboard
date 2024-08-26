@@ -14,8 +14,8 @@ const Mapping = () => {
 
   useEffect(() => {
     // Fetch employees
-    axios.get("http://localhost:8000/api/employee")
-      .then((response) => setEmployees(response.data))
+    axios.get("http://localhost:8000/api/employee?all=true")
+      .then((response) => setEmployees(response.data.employees))
       .catch((error) => console.error(error));
 
     // Fetch customers
@@ -92,10 +92,10 @@ const Mapping = () => {
         </Form>
 
         {/* Display success message */}
-        {successMessage && <div style={{ color: 'green', marginTop: '10px' }}>{successMessage}</div>}
+        {successMessage && <div style={{ color: 'green', marginTop: '10px' }} className="bg-stone-900 font-semibold bg-opacity-90 w-max px-3 py-1 rounded-lg">{successMessage}</div>}
 
         {/* Display error message */}
-        {errorMessage && <div style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</div>}
+        {errorMessage && <div style={{ color: 'red', marginTop: '10px' }} className="bg-stone-900 font-semibold bg-opacity-90 w-max px-3 py-1 rounded-lg">{errorMessage}</div>}
       </div>
     </div>
   );
