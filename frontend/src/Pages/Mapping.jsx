@@ -54,12 +54,13 @@ const Mapping = () => {
   };
 
   return (
-    <div className="bg-fadewhite h-screen ml-1 p-10">
-      <div className="max-h-screen bg-gray-100 p-8">
+    <div className="h-screen ml-1 p-10">
+      <div className="max-h-screen bg-stone-700 bg-opacity-50 rounded-lg text-white p-8">
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formEmployeeSelect">
-            <Form.Label>Search and Select Employee</Form.Label>
+          <Form.Group className="mb-3 text-black" controlId="formEmployeeSelect">
+            <Form.Label className="text-white">Search and Select Employee</Form.Label>
             <Select
+            className=""
               value={selectedEmployee}
               onChange={setSelectedEmployee}
               options={employees.map((employee) => ({
@@ -71,8 +72,8 @@ const Mapping = () => {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formCustomerSelect">
-            <Form.Label>Search and Select Customer</Form.Label>
+          <Form.Group className="mb-3 text-black" controlId="formCustomerSelect">
+            <Form.Label className="text-white">Search and Select Customer</Form.Label>
             <Select
               value={selectedCustomer}
               onChange={setSelectedCustomer}

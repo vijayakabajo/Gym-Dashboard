@@ -56,7 +56,7 @@ const MyNavbar = () => {
           </p>
         </Dropdown.Toggle>
 
-        <Dropdown.Menu className="bg-[#574898] ml-8 mt-1">
+        <Dropdown.Menu className="bg-[#574898] mt-1">
           <Dropdown.Item
             href="#/action-1"
             className="hover:bg-stone-800 hover:bg-opacity-10 text-white"
