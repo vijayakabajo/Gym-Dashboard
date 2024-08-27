@@ -15,7 +15,7 @@ exports.createCustomer = async (req, res) => {
 // Get all customers
 exports.getAllCustomers = async (req, res) => {
   try {
-    const { search, filter } = req.query;
+    const { search, filter, page = 1, limit = 8, all } = req.query;
     const query = {};
 
     // Search
@@ -30,17 +30,47 @@ exports.getAllCustomers = async (req, res) => {
 
     // Filter
     if (filter === "last7Days") {
-      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 7)) };
+      query.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      };
     } else if (filter === "last30Days") {
-      query.createdAt = { $gte: new Date(new Date().setDate(new Date().getDate() - 30)) };
+      query.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+      };
     }
 
-    const customers = await Customer.find(query);
-    res.status(200).json(customers);
+    if (all === 'true') {
+      // Fetch all customers that match the query without pagination
+      const customers = await Customer.find(query);
+      res.status(200).json({
+        customers,
+        total: customers.length,
+        page: 1, // Placeholder value
+        pages: 1, // Placeholder value
+      });
+    } else {
+      // Pagination
+      const pageNum = parseInt(page, 10);
+      const limitNum = parseInt(limit, 10);
+      const skip = (pageNum - 1) * limitNum;
+
+      const [customers, totalCustomers] = await Promise.all([
+        Customer.find(query).skip(skip).limit(limitNum),
+        Customer.countDocuments(query),
+      ]);
+
+      res.status(200).json({
+        customers,
+        total: totalCustomers,
+        page: pageNum,
+        pages: Math.ceil(totalCustomers / limitNum),
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // Get a customer by ID

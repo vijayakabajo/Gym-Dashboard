@@ -30,7 +30,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
             limit: limit,
           },
         });
-        setEmployees(response.data.employees.reverse());
+        setEmployees(response.data.employees);
         setTotalPages(Math.ceil(response.data.total / limit)); // Calculate total pages based on response
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -250,8 +250,8 @@ const EmployeeList = ({ searchQuery, filter }) => {
         ) : (
           <div className="px-4 py-3">
             <div className="flex flex-col justify-center items-center mb-4">
-              <h1 className="text-white font-serif text-3xl mb-3 font-semibold">
-                {selectedEmployeeName}'s Customers
+              <h1 className="text-white font-serif text-2xl text-center mb-3 font-semibold">
+                <span className="capitalize">{selectedEmployeeName}</span>'s Customers
               </h1>
               <div className="rounded-full overflow-hidden">
                 <img

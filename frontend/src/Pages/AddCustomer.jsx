@@ -47,7 +47,7 @@ const AddCustomer = () => {
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert(`Error submitting the data: Make Sure The Email/Phone N0. is unique (${error.message})`);
+      alert(`Error submitting the data: Make Sure The Email/Phone No. is unique (${error.message})`);
     }
   };
 

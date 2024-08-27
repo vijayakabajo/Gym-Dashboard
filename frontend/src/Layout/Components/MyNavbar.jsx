@@ -66,7 +66,7 @@ const MyNavbar = () => {
             className="hover:bg-stone-800 hover:bg-opacity-10 text-white block md:hidden"
             onClick={() => navigate("/")}
           >
-            DASHBOARD
+            Dashboard
           </Dropdown.Item>
           <Dropdown.Item
             href="#/action-1"

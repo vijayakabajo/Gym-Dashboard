@@ -15,12 +15,12 @@ const Mapping = () => {
   useEffect(() => {
     // Fetch employees
     axios.get("http://localhost:8000/api/employee?all=true")
-      .then((response) => setEmployees(response.data.employees))
+      .then((response) => setEmployees(response.data.employees.reverse()))
       .catch((error) => console.error(error));
 
     // Fetch customers
-    axios.get("http://localhost:8000/api/customer")
-      .then((response) => setCustomers(response.data))
+    axios.get("http://localhost:8000/api/customer?all=true")
+      .then((response) => setCustomers(response.data.customers.reverse()))
       .catch((error) => console.error(error));
   }, []);
 
