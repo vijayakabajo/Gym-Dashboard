@@ -2,12 +2,11 @@ const Customer = require("../models/customer");
 const Employee = require("../models/employee");
 
 // Create a new customer
-// Create a new customer
 exports.createCustomer = async (req, res) => {
   try {
     const { plan, sessionType, amountPaid } = req.body;
 
-    // Calculate total amount based on plan and session type
+    // Define charges
     const planCharges = {
       "per day": 750,
       "1 month": 7500,
@@ -24,21 +23,25 @@ exports.createCustomer = async (req, res) => {
       "24 sessions (couple)": 30000,
     };
 
-    const totalAmount = planCharges[plan] + sessionCharges[sessionType];
+    // Calculate total amount
+    const totalAmount = planCharges[plan] + (sessionType ? sessionCharges[sessionType] : 0);
     const debt = totalAmount - amountPaid;
 
+    // Create customer object
     const customer = new Customer({
       ...req.body,
       totalAmount,
       debt,
     });
 
+    // Save customer
     await customer.save();
     res.status(201).json(customer);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
 
 
 // Get all customers with optional filters

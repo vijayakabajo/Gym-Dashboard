@@ -19,7 +19,7 @@ const Customers = () => {
   };
 
   return (
-    <div className="h-auto ml-1 relative">
+    <div className="h-screen ml-1 relative">
       <div className="max-h-dvh bg-gray-100 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex justify-center items-center gap-x-2">

@@ -50,7 +50,6 @@ const customerSchema = new mongoose.Schema(
         "12 sessions (couple)",
         "24 sessions (couple)",
       ],
-      required: true,
     },
     status: {
       type: String,

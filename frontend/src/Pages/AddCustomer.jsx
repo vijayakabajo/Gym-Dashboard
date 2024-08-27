@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Select from "react-select";
 
 const AddCustomer = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ const AddCustomer = () => {
   });
 
   const [employees, setEmployees] = useState([]);
-  const [assignedEmployees, setAssignedEmployees] = useState([]);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
 
   const plans = {
     "per day": 750,
@@ -42,10 +43,14 @@ const AddCustomer = () => {
 
   useEffect(() => {
     const fetchEmployees = async () => {
-      axios
-        .get("http://localhost:8000/api/employee?all=true")
-        .then((response) => setEmployees(response.data.employees.reverse()))
-        .catch((error) => console.error(error));
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/employee?all=true"
+        );
+        setEmployees(response.data.employees.reverse());
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     fetchEmployees();
@@ -57,28 +62,31 @@ const AddCustomer = () => {
       ...prevState,
       [name]: value,
     }));
-
+  
+    // Calculate totals only when the relevant fields change
     if (name === "plan" || name === "sessionType" || name === "amountPaid") {
-      calculateTotal(name === "amountPaid" ? undefined : value, name);
+      calculateTotal({ ...formData, [name]: value });
     }
   };
 
-  const calculateTotal = (value, field) => {
+  const calculateTotal = (updatedFormData) => {
     let total = 0;
-    let paid = formData.amountPaid;
-
-    if (field === "plan") {
-      total = sessions[formData.sessionType] + plans[value];
-    } else if (field === "sessionType") {
-      total = plans[formData.plan] + sessions[value];
-    } else if (field === "amountPaid") {
-      paid = value ? parseFloat(value) : 0;
-    } else {
-      total = sessions[formData.sessionType] + plans[formData.plan];
+    const { plan, sessionType, amountPaid } = updatedFormData;
+  
+    // Add plan amount if selected
+    if (plan) {
+      total += plans[plan];
     }
-
-    const debt = total - paid;
-
+  
+    // Add session amount if selected
+    if (sessionType) {
+      total += sessions[sessionType];
+    }
+  
+    // Calculate the debt
+    const debt = total - (amountPaid ? parseFloat(amountPaid) : 0);
+  
+    // Update the formData state
     setFormData((prevState) => ({
       ...prevState,
       totalAmount: total,
@@ -86,27 +94,44 @@ const AddCustomer = () => {
     }));
   };
 
-  const handleEmployeeAssign = (event) => {
-    const employeeId = event.target.value;
-    if (employeeId && !assignedEmployees.includes(employeeId)) {
-      setAssignedEmployees([...assignedEmployees, employeeId]);
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const time = `${formData.fromTime} ${formData.fromPeriod} - ${formData.toTime} ${formData.toPeriod}`;
-
+    const assignedEmployees = selectedEmployees.map((emp) => emp.value);
+  
+    // Prepare the data to be sent, excluding sessionType if not selected
+    const dataToSend = {
+      fullname: formData.fullname,
+      emailId: formData.emailId,
+      mobileNumber: formData.mobileNumber,
+      address: formData.address,
+      fromTime: formData.fromTime,
+      fromPeriod: formData.fromPeriod,
+      toTime: formData.toTime,
+      toPeriod: formData.toPeriod,
+      plan: formData.plan,
+      totalAmount: formData.totalAmount,
+      amountPaid: formData.amountPaid,
+      debt: formData.debt,
+      assignedEmployees: assignedEmployees,
+      time: time,
+    };
+  
+    // Include sessionType only if it is selected
+    if (formData.sessionType) {
+      dataToSend.sessionType = formData.sessionType;
+    }
+  
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8000/api/customer",
-        { ...formData, time, assignedEmployees },
+        dataToSend,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-
+  
       alert("Customer data submitted successfully!");
       setFormData({
         fullname: "",
@@ -124,7 +149,7 @@ const AddCustomer = () => {
         amountPaid: 0,
         debt: 0,
       });
-      setAssignedEmployees([]);
+      setSelectedEmployees([]);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert(
@@ -133,10 +158,14 @@ const AddCustomer = () => {
     }
   };
 
+
+                     // UI PART
+                     
+
   return (
-    <div className="h-screen ml-1 p-10">
-      <div className="max-h-screen text-white bg-stone-700 bg-opacity-50 rounded-lg p-8">
-        <Form onSubmit={handleSubmit}>
+    <div className="h-[800] ml-1 p-4 sm:p-10 overflow-y-auto">
+      <div className="min-h-screen text-white bg-stone-700 bg-opacity-50 rounded-lg p-4 sm:p-8">
+        <Form onSubmit={handleSubmit} className="h-full">
           <Form.Group className="mb-3" controlId="formBasicName">
             <Form.Label>Full Name</Form.Label>
             <Form.Control
@@ -145,30 +174,39 @@ const AddCustomer = () => {
               name="fullname"
               value={formData.fullname}
               onChange={handleChange}
+              required
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="johndoe@gmail.com"
-              name="emailId"
-              value={formData.emailId}
-              onChange={handleChange}
-            />
-          </Form.Group>
+          <div className="w-full flex justify-around space-x-8">
+            <div className="w-1/2">
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="johndoe@gmail.com"
+                  name="emailId"
+                  value={formData.emailId}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
 
-          <Form.Group className="mb-3" controlId="formBasicMobile">
-            <Form.Label>Mobile Number</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="123-456-7890"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-            />
-          </Form.Group>
+            <div className="w-1/2">
+              <Form.Group className="mb-3" controlId="formBasicMobile">
+                <Form.Label>Mobile Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="123-456-7890"
+                  name="mobileNumber"
+                  value={formData.mobileNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </div>
+          </div>
 
           <Form.Group className="mb-3" controlId="formBasicAddress">
             <Form.Label>Address</Form.Label>
@@ -181,11 +219,10 @@ const AddCustomer = () => {
             />
           </Form.Group>
 
-          {/* Aligning Time, Plan, and Session on one line */}
-          <div className="d-flex justify-content-between mb-3">
-            <Form.Group controlId="formBasicTime" className="w-32">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <Form.Group controlId="formBasicTime" className="w-full">
               <Form.Label>Time</Form.Label>
-              <div className="d-flex">
+              <div className="flex space-x-2">
                 <Form.Control
                   type="number"
                   placeholder="From"
@@ -194,14 +231,14 @@ const AddCustomer = () => {
                   onChange={handleChange}
                   min="1"
                   max="12"
-                  className="mr-2 w-20"
+                  className="w-full"
                 />
                 <Form.Control
                   as="select"
                   name="fromPeriod"
                   value={formData.fromPeriod}
                   onChange={handleChange}
-                  className="w-16"
+                  className="w-full"
                 >
                   <option>AM</option>
                   <option>PM</option>
@@ -215,14 +252,14 @@ const AddCustomer = () => {
                   onChange={handleChange}
                   min="1"
                   max="12"
-                  className="mr-2 w-20"
+                  className="w-full"
                 />
                 <Form.Control
                   as="select"
                   name="toPeriod"
                   value={formData.toPeriod}
                   onChange={handleChange}
-                  className="w-16"
+                  className="w-full"
                 >
                   <option>AM</option>
                   <option>PM</option>
@@ -230,13 +267,14 @@ const AddCustomer = () => {
               </div>
             </Form.Group>
 
-            <Form.Group controlId="formBasicPlan" className="w-32">
+            <Form.Group controlId="formBasicPlan" className="w-full">
               <Form.Label>Plan</Form.Label>
               <Form.Control
                 as="select"
                 name="plan"
                 value={formData.plan}
                 onChange={handleChange}
+                required
               >
                 <option value="">Select Plan</option>
                 {Object.keys(plans).map((plan) => (
@@ -247,7 +285,7 @@ const AddCustomer = () => {
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="formBasicSession" className="w-32">
+            <Form.Group controlId="formBasicSession" className="w-full">
               <Form.Label>Session Type</Form.Label>
               <Form.Control
                 as="select"
@@ -266,65 +304,61 @@ const AddCustomer = () => {
           </div>
 
           <Form.Group className="mb-3" controlId="formBasicEmployee">
-            <Form.Label>Assign Employee</Form.Label>
-            <Form.Control as="select" onChange={handleEmployeeAssign} className="text-black">
-              <option value="" >Select Employee</option>
-              {employees.map((employee) => (
-                <option key={employee._id} value={employee._id}>
-                  {employee.name}
-                </option>
-              ))}
-            </Form.Control>
-            <div className="mt-3">
-              <h5>Assigned Employees:</h5>
-              <ul>
-                {assignedEmployees.map((employeeId) => {
-                  const employee = employees.find(
-                    (emp) => emp._id === employeeId
-                  );
-                  return <li key={employeeId}>{employee?.name}</li>;
-                })}
-              </ul>
-            </div>
+            <Form.Label>Assign Employees</Form.Label>
+            <Select
+              value={selectedEmployees}
+              onChange={setSelectedEmployees}
+              options={employees.map((employee) => ({
+                value: employee._id,
+                label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`,
+              }))}
+              placeholder="Search and select employees"
+              isMulti
+              isSearchable
+              className="text-black"
+            />
           </Form.Group>
 
-          <div className="inline-flex">
-            <Form.Group className="mb-3" controlId="formBasicTotal">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <Form.Group controlId="formBasicTotalAmount" className="w-full">
               <Form.Label>Total Amount</Form.Label>
               <Form.Control
                 type="number"
                 name="totalAmount"
                 value={formData.totalAmount}
+                onChange={handleChange}
                 readOnly
+                className="bg-gray-200"
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPaid">
+            <Form.Group controlId="formBasicAmountPaid" className="w-full">
               <Form.Label>Amount Paid</Form.Label>
               <Form.Control
                 type="number"
-                placeholder="Enter Amount Paid"
                 name="amountPaid"
                 value={formData.amountPaid}
                 onChange={handleChange}
+                className="w-full"
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicDebt">
+            <Form.Group controlId="formBasicDebt" className="w-full">
               <Form.Label>Debt</Form.Label>
               <Form.Control
                 type="number"
                 name="debt"
                 value={formData.debt}
+                onChange={handleChange}
                 readOnly
+                className="bg-gray-200"
               />
             </Form.Group>
           </div>
-          <div>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </div>
+
+          <Button variant="primary" type="submit" className="w-full mt-4">
+            Submit
+          </Button>
         </Form>
       </div>
     </div>

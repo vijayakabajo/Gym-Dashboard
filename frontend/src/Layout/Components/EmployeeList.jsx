@@ -115,7 +115,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
   };
 
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden h-auto">
+    <div className="shadow-lg rounded-lg h-auto w-full">
       <div className="overflow-x-auto">
         <table className="w-full divide-y divide-gray-200">
           <thead className="bg-[#574898] text-white">
@@ -139,7 +139,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
                 Since
               </th>
               <th className="px-3 py-2 text-center text-base font-medium uppercase tracking-wider">
-                Customers
+                Clients
               </th>
               <th className="px-3 py-2 text-center text-base font-medium uppercase tracking-wider">
                 Actions

@@ -5,7 +5,10 @@ import MyNavbar from './Components/MyNavbar';
 const Layout = ({ Maincontent }) => {
   return (
     <div className="flex flex-col min-h-screen bg-stone-800">
-      <MyNavbar />
+      <div className=''>
+        <MyNavbar />
+      </div>
+      
       <div className="flex flex-1">
         <div className='hidden md:block'>
            <SideBar/>

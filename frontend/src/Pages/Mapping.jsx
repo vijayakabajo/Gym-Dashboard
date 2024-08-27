@@ -74,7 +74,7 @@ const Mapping = () => {
           </Form.Group>
 
           <Form.Group className="mb-3 text-black" controlId="formEmployeeSelect">
-            <Form.Label className="text-white">Search and Select Employee</Form.Label>
+            <Form.Label className="text-white">Search and Select Personal Trainer</Form.Label>
             <Select
             className=""
               value={selectedEmployee}
@@ -83,13 +83,13 @@ const Mapping = () => {
                 value: employee._id,
                 label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`
               }))}
-              placeholder="Search and select an employee"
+              placeholder="Search and select an Personal Trainer"
               isSearchable
             />
           </Form.Group>
 
           <Button variant="primary" type="submit">
-            Assign Customer to Employee
+            Assign Client to Personal Trainer
           </Button>
         </Form>
 
