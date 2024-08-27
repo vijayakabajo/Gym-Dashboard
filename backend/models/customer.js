@@ -16,7 +16,7 @@ const customerSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    address:{
+    address: {
       type: String,
       required: true,
     },
@@ -24,17 +24,57 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    assignedEmployees: [          //array of employees
+    assignedEmployees: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Employee",
       },
     ],
+    plan: {
+      type: String,
+      enum: [
+        "per day",
+        "1 month",
+        "3 months",
+        "6 months",
+        "12 months",
+      ],
+      required: true,
+    },
+    sessionType: {
+      type: String,
+      enum: [
+        "1 session",
+        "12 sessions",
+        "24 sessions",
+        "12 sessions (couple)",
+        "24 sessions (couple)",
+      ],
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["active", "freeze", "transferred"],
+      default: "active",
+    },
+    totalAmount: {
+      type: Number,
+      required: true,
+    },
+    amountPaid: {
+      type: Number,
+      default: 0,
+    },
+    debt: {
+      type: Number,
+      default: function () {
+        return this.totalAmount - this.amountPaid;
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
 
-
-module.exports = mongoose.model("customer", customerSchema);
+module.exports = mongoose.model("Customer", customerSchema);

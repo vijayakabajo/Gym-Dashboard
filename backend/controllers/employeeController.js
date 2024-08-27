@@ -12,7 +12,7 @@ exports.createEmployee = async (req, res) => {
   }
 };
 
-// Get all employees
+
 // Get all employees with pagination, search, and filter
 exports.getAllEmployees = async (req, res) => {
   try {

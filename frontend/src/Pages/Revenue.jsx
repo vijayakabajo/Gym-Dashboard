@@ -34,13 +34,13 @@ const RevenuePage = () => {
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
-            className="bg-[#e5e7eb] text-[#1f2937] px-4 py-2 rounded-lg"
+            className="bg-[#e5e7eb] text-[#1f2937] px-2 py-2 rounded-lg"
             placeholderText="Select Date"
           />
           <Menu as="div" className="relative">
             <div>
               <Menu.Button className="px-4 py-2 rounded-lg flex items-center space-x-2 bg-stone-200">
-                <span>Filter By Date</span>
+                <span>Filter By</span>
                 <ChevronDownIcon className="w-5 h-5" />
               </Menu.Button>
             </div>

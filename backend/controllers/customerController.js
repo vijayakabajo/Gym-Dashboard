@@ -2,9 +2,37 @@ const Customer = require("../models/customer");
 const Employee = require("../models/employee");
 
 // Create a new customer
+// Create a new customer
 exports.createCustomer = async (req, res) => {
   try {
-    const customer = new Customer(req.body);
+    const { plan, sessionType, amountPaid } = req.body;
+
+    // Calculate total amount based on plan and session type
+    const planCharges = {
+      "per day": 750,
+      "1 month": 7500,
+      "3 months": 17000,
+      "6 months": 22000,
+      "12 months": 27500,
+    };
+
+    const sessionCharges = {
+      "1 session": 1250,
+      "12 sessions": 12500,
+      "24 sessions": 19500,
+      "12 sessions (couple)": 19000,
+      "24 sessions (couple)": 30000,
+    };
+
+    const totalAmount = planCharges[plan] + sessionCharges[sessionType];
+    const debt = totalAmount - amountPaid;
+
+    const customer = new Customer({
+      ...req.body,
+      totalAmount,
+      debt,
+    });
+
     await customer.save();
     res.status(201).json(customer);
   } catch (error) {
@@ -12,7 +40,8 @@ exports.createCustomer = async (req, res) => {
   }
 };
 
-// Get all customers
+
+// Get all customers with optional filters
 exports.getAllCustomers = async (req, res) => {
   try {
     const { search, filter, page = 1, limit = 8, all } = req.query;
@@ -28,7 +57,7 @@ exports.getAllCustomers = async (req, res) => {
       ];
     }
 
-    // Filter
+    // Filter by date
     if (filter === "last7Days") {
       query.createdAt = {
         $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
@@ -40,16 +69,14 @@ exports.getAllCustomers = async (req, res) => {
     }
 
     if (all === 'true') {
-      // Fetch all customers that match the query without pagination
       const customers = await Customer.find(query);
       res.status(200).json({
         customers,
         total: customers.length,
-        page: 1, // Placeholder value
-        pages: 1, // Placeholder value
+        page: 1,
+        pages: 1,
       });
     } else {
-      // Pagination
       const pageNum = parseInt(page, 10);
       const limitNum = parseInt(limit, 10);
       const skip = (pageNum - 1) * limitNum;
@@ -70,6 +97,7 @@ exports.getAllCustomers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 

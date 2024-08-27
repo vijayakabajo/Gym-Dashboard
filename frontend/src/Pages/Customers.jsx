@@ -43,7 +43,7 @@ const Customers = () => {
               onClick={() => navigate("/addcustomer")}
             >
               <FaPlus className="w-5 h-5" />
-              <span>Add New Customer</span>
+              <span>New Customer</span>
             </button>
             <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600">
               <FaDownload className="w-5 h-5" />
@@ -52,7 +52,7 @@ const Customers = () => {
             <Menu as="div" className="relative">
               <div>
                 <Menu.Button className="px-4 py-2 rounded-lg flex items-center space-x-2 hover: bg-stone-200">
-                  <span>Filter By Date</span>
+                  <span>Filter By</span>
                   <ChevronDownIcon className="w-5 h-5" />
                 </Menu.Button>
               </div>

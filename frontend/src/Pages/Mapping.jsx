@@ -57,20 +57,7 @@ const Mapping = () => {
     <div className="h-screen ml-1 p-10">
       <div className="max-h-screen bg-stone-700 bg-opacity-50 rounded-lg text-white p-8">
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3 text-black" controlId="formEmployeeSelect">
-            <Form.Label className="text-white">Search and Select Employee</Form.Label>
-            <Select
-            className=""
-              value={selectedEmployee}
-              onChange={setSelectedEmployee}
-              options={employees.map((employee) => ({
-                value: employee._id,
-                label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`
-              }))}
-              placeholder="Search and select an employee"
-              isSearchable
-            />
-          </Form.Group>
+
 
           <Form.Group className="mb-3 text-black" controlId="formCustomerSelect">
             <Form.Label className="text-white">Search and Select Customer</Form.Label>
@@ -86,8 +73,23 @@ const Mapping = () => {
             />
           </Form.Group>
 
+          <Form.Group className="mb-3 text-black" controlId="formEmployeeSelect">
+            <Form.Label className="text-white">Search and Select Employee</Form.Label>
+            <Select
+            className=""
+              value={selectedEmployee}
+              onChange={setSelectedEmployee}
+              options={employees.map((employee) => ({
+                value: employee._id,
+                label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`
+              }))}
+              placeholder="Search and select an employee"
+              isSearchable
+            />
+          </Form.Group>
+
           <Button variant="primary" type="submit">
-            Map Customer to Employee
+            Assign Customer to Employee
           </Button>
         </Form>
 
