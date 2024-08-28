@@ -25,13 +25,13 @@ const SideBar = () => {
           className="p-1 py-2 rounded-lg px-3 hover:bg-stone-400 hover:bg-opacity-40 cursor-pointer text-nowrap"
           onClick={() => navigate("/customers")}
         >
-          Customers List
+          All Clients
         </li>
         <li
           className="p-1 py-2 rounded-lg px-3 hover:bg-stone-400 hover:bg-opacity-40 cursor-pointer text-nowrap"
           onClick={() => navigate("/employees")}
         >
-          Employee List
+          Personal Trainers
         </li>
         <li
           className="p-1 py-2 rounded-lg px-3 hover:bg-stone-400 hover:bg-opacity-40 cursor-pointer text-nowrap"

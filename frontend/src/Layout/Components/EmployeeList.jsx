@@ -115,8 +115,8 @@ const EmployeeList = ({ searchQuery, filter }) => {
   };
 
   return (
-    <div className="shadow-lg rounded-lg h-auto w-full">
-      <div className="overflow-x-auto">
+    <div className="shadow-lg h-auto w-full">
+      <div className="overflow-x-auto rounded-lg">
         <table className="w-full divide-y divide-gray-200">
           <thead className="bg-[#574898] text-white">
             <tr>
@@ -251,7 +251,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
           <div className="px-4 py-3">
             <div className="flex flex-col justify-center items-center mb-4">
               <h1 className="text-white font-serif text-2xl text-center mb-3 font-semibold">
-                <span className="capitalize">{selectedEmployeeName}</span>'s Customers
+                <span className="capitalize">{selectedEmployeeName}</span>'s Client
               </h1>
               <div className="rounded-full overflow-hidden">
                 <img

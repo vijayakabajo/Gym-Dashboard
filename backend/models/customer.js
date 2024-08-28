@@ -22,7 +22,6 @@ const customerSchema = new mongoose.Schema(
     },
     time: {
       type: String,
-      required: true,
     },
     assignedEmployees: [
       {

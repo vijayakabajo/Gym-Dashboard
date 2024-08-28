@@ -31,12 +31,12 @@ const Employees = () => {
               />
             </div>
 
-            <h1 className="text-3xl font-bold text-white">All Employee</h1>
+            <h1 className="text-3xl font-bold text-white">Personal Trainers</h1>
           </div>
           <div className="flex items-center space-x-4">
             <input
               type="text"
-              placeholder="Search Employees..."
+              placeholder="Search Personal Trainers..."
               value={searchQuery}
               onChange={handleSearchChange}
               className="border rounded px-4 py-2 bg-stone-700 bg-opacity-50 text-stone-100"
@@ -46,7 +46,7 @@ const Employees = () => {
               onClick={() => navigate("/mapping")}
             >
               <FaPlus className="w-5 h-5" />
-              <span>Map Customer</span>
+              <span>Map Clients</span>
             </button>
             <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600">
               <FaDownload className="w-5 h-5" />

@@ -27,7 +27,7 @@ const Customers = () => {
               <img src="/gymmm.gif" alt="Description of GIF" className="h-9" />
             </div>
 
-            <h1 className="text-3xl font-bold text-white">My Customers</h1>
+            <h1 className="text-3xl font-bold text-white">All Clients</h1>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -43,7 +43,7 @@ const Customers = () => {
               onClick={() => navigate("/addcustomer")}
             >
               <FaPlus className="w-5 h-5" />
-              <span>New Customer</span>
+              <span>New Client</span>
             </button>
             <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600">
               <FaDownload className="w-5 h-5" />

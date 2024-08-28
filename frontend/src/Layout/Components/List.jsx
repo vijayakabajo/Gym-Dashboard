@@ -70,7 +70,7 @@ const List = ({ searchQuery, filter }) => {
   };
 
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden h-auto">
+    <div className="shadow-lg rounded-lg overflow-hidden min-h-full">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-[#574898] text-white">
@@ -88,10 +88,7 @@ const List = ({ searchQuery, filter }) => {
                 Address
               </th>
               <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
-                Timing
-              </th>
-              <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
-                Since
+                Joined
               </th>
               <th className="px-3 py-2 text-center text-base font-medium uppercase tracking-wider">
                 Actions
@@ -113,9 +110,6 @@ const List = ({ searchQuery, filter }) => {
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap capitalize">
                     {customer.address}
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap capitalize">
-                    {customer.time}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     {new Date(customer.createdAt).toLocaleDateString("en-GB")}

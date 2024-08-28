@@ -10,10 +10,6 @@ const AddCustomer = () => {
     emailId: "",
     mobileNumber: "",
     address: "",
-    fromTime: "",
-    fromPeriod: "AM",
-    toTime: "",
-    toPeriod: "AM",
     plan: "",
     sessionType: "",
     assignedEmployees: [],
@@ -22,7 +18,6 @@ const AddCustomer = () => {
     debt: 0,
   });
 
-  const [employees, setEmployees] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
 
   const plans = {
@@ -40,6 +35,8 @@ const AddCustomer = () => {
     "12 sessions (couple)": 19000,
     "24 sessions (couple)": 30000,
   };
+
+  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -62,7 +59,7 @@ const AddCustomer = () => {
       ...prevState,
       [name]: value,
     }));
-  
+
     // Calculate totals only when the relevant fields change
     if (name === "plan" || name === "sessionType" || name === "amountPaid") {
       calculateTotal({ ...formData, [name]: value });
@@ -72,20 +69,20 @@ const AddCustomer = () => {
   const calculateTotal = (updatedFormData) => {
     let total = 0;
     const { plan, sessionType, amountPaid } = updatedFormData;
-  
+
     // Add plan amount if selected
     if (plan) {
       total += plans[plan];
     }
-  
+
     // Add session amount if selected
     if (sessionType) {
       total += sessions[sessionType];
     }
-  
+
     // Calculate the debt
     const debt = total - (amountPaid ? parseFloat(amountPaid) : 0);
-  
+
     // Update the formData state
     setFormData((prevState) => ({
       ...prevState,
@@ -96,52 +93,38 @@ const AddCustomer = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    const time = `${formData.fromTime} ${formData.fromPeriod} - ${formData.toTime} ${formData.toPeriod}`;
+
     const assignedEmployees = selectedEmployees.map((emp) => emp.value);
-  
+
     // Prepare the data to be sent, excluding sessionType if not selected
     const dataToSend = {
       fullname: formData.fullname,
       emailId: formData.emailId,
       mobileNumber: formData.mobileNumber,
       address: formData.address,
-      fromTime: formData.fromTime,
-      fromPeriod: formData.fromPeriod,
-      toTime: formData.toTime,
-      toPeriod: formData.toPeriod,
       plan: formData.plan,
       totalAmount: formData.totalAmount,
       amountPaid: formData.amountPaid,
       debt: formData.debt,
       assignedEmployees: assignedEmployees,
-      time: time,
     };
-  
+
     // Include sessionType only if it is selected
     if (formData.sessionType) {
       dataToSend.sessionType = formData.sessionType;
     }
-  
+
     try {
-      await axios.post(
-        "http://localhost:8000/api/customer",
-        dataToSend,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-  
+      await axios.post("http://localhost:8000/api/customer", dataToSend, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       alert("Customer data submitted successfully!");
       setFormData({
         fullname: "",
         emailId: "",
         mobileNumber: "",
         address: "",
-        fromTime: "",
-        fromPeriod: "AM",
-        toTime: "",
-        toPeriod: "AM",
         plan: "",
         sessionType: "",
         assignedEmployees: [],
@@ -158,9 +141,7 @@ const AddCustomer = () => {
     }
   };
 
-
-                     // UI PART
-                     
+  // UI PART
 
   return (
     <div className="h-[800] ml-1 p-4 sm:p-10 overflow-y-auto">
@@ -220,55 +201,8 @@ const AddCustomer = () => {
           </Form.Group>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-            <Form.Group controlId="formBasicTime" className="w-full">
-              <Form.Label>Time</Form.Label>
-              <div className="flex space-x-2">
-                <Form.Control
-                  type="number"
-                  placeholder="From"
-                  name="fromTime"
-                  value={formData.fromTime}
-                  onChange={handleChange}
-                  min="1"
-                  max="12"
-                  className="w-full"
-                />
-                <Form.Control
-                  as="select"
-                  name="fromPeriod"
-                  value={formData.fromPeriod}
-                  onChange={handleChange}
-                  className="w-full"
-                >
-                  <option>AM</option>
-                  <option>PM</option>
-                </Form.Control>
-                <span className="mx-2 place-self-center">-</span>
-                <Form.Control
-                  type="number"
-                  placeholder="To"
-                  name="toTime"
-                  value={formData.toTime}
-                  onChange={handleChange}
-                  min="1"
-                  max="12"
-                  className="w-full"
-                />
-                <Form.Control
-                  as="select"
-                  name="toPeriod"
-                  value={formData.toPeriod}
-                  onChange={handleChange}
-                  className="w-full"
-                >
-                  <option>AM</option>
-                  <option>PM</option>
-                </Form.Control>
-              </div>
-            </Form.Group>
-
-            <Form.Group controlId="formBasicPlan" className="w-full">
-              <Form.Label>Plan</Form.Label>
+           <Form.Group controlId="formBasicPlan" className="w-full">
+              <Form.Label>Membership Plan</Form.Label>
               <Form.Control
                 as="select"
                 name="plan"
@@ -304,7 +238,7 @@ const AddCustomer = () => {
           </div>
 
           <Form.Group className="mb-3" controlId="formBasicEmployee">
-            <Form.Label>Assign Employees</Form.Label>
+            <Form.Label>Assign Personal Trainer</Form.Label>
             <Select
               value={selectedEmployees}
               onChange={setSelectedEmployees}
@@ -312,7 +246,7 @@ const AddCustomer = () => {
                 value: employee._id,
                 label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`,
               }))}
-              placeholder="Search and select employees"
+              placeholder="Search and select personal trainer"
               isMulti
               isSearchable
               className="text-black"
