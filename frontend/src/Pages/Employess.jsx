@@ -34,12 +34,20 @@ const Employees = () => {
             <h1 className="text-3xl font-bold text-white">Personal Trainers</h1>
           </div>
           <div className="flex items-center space-x-4">
+            <button className="text-white bg-stone-200 bg-opacity-30 p-2 rounded-full group relative"
+            onClick={()=>navigate("/signup")}
+            >
+              <FaPlus className="w-5 h-5" />
+              <span className="tooltip-text absolute hidden group-hover:flex bottom-full left-1/2 transform -translate-x-1/2 -mb-1 bg-stone-700 bg-opacity-60 text-white text-sm p-1 rounded text-nowrap">
+                Add New Personal Trainer
+              </span>
+            </button>
             <input
               type="text"
               placeholder="Search Personal Trainers..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="border rounded px-4 py-2 bg-stone-700 bg-opacity-50 text-stone-100"
+              className="border rounded px-3 py-2 bg-stone-700 bg-opacity-50 text-stone-100"
             />
             <button
               className="bg-[#574898] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-600"

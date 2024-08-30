@@ -40,7 +40,7 @@ const Signup = () => {
           mobileNumber: "",
           address: "",
         });
-        navigate("/login");
+        navigate("/employees");
       }
     } catch (error) {
       console.error("Error during signup:", error);
@@ -52,7 +52,7 @@ const Signup = () => {
     <div className="flex items-center justify-center bg-blue">
       <div className="bg-white rounded-lg shadow-lg p-8 w-[28rem] m-4">
         <div>
-          <h1 className="text-3xl font-bold py-2 text-center">Sign Up <br /> (Employee)</h1>
+          <h1 className="text-3xl font-bold py-2 text-center mb-6">Add New Personal Trainer</h1>
 
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formName">

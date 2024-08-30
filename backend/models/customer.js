@@ -31,24 +31,19 @@ const customerSchema = new mongoose.Schema(
     ],
     plan: {
       type: String,
-      enum: [
-        "per day",
-        "1 month",
-        "3 months",
-        "6 months",
-        "12 months",
-      ],
+      required: true, 
+    },
+    planCost: {
+      type: Number,
       required: true,
     },
     sessionType: {
       type: String,
-      enum: [
-        "1 session",
-        "12 sessions",
-        "24 sessions",
-        "12 sessions (couple)",
-        "24 sessions (couple)",
-      ],
+      default: "0 Sessions",
+    },
+    sessionCost: {
+      type: Number,
+      default: 0, 
     },
     status: {
       type: String,

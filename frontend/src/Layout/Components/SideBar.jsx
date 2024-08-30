@@ -39,6 +39,12 @@ const SideBar = () => {
         >
           Revenue
         </li>
+        <li
+          className="p-1 py-2 rounded-lg px-3 hover:bg-stone-400 hover:bg-opacity-40 cursor-pointer text-nowrap"
+          onClick={() => navigate("/expiration")}
+        >
+          Expiration
+        </li>
       </ul>
     </div>
   );

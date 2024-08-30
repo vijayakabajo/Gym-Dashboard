@@ -1,31 +1,20 @@
 const Customer = require("../models/customer");
 const Employee = require("../models/employee");
+const moment = require('moment');
 
 // Create a new customer
 exports.createCustomer = async (req, res) => {
   try {
-    const { plan, sessionType, amountPaid } = req.body;
+    const { plan, planCost = 0, sessionType = "", sessionCost = 0, amountPaid = 0 } = req.body;
 
-    // Define charges
-    const planCharges = {
-      "per day": 750,
-      "1 month": 7500,
-      "3 months": 17000,
-      "6 months": 22000,
-      "12 months": 27500,
-    };
+    // Ensure all costs are numbers
+    const planCostNum = parseFloat(planCost);
+    const sessionCostNum = parseFloat(sessionCost);
+    const amountPaidNum = parseFloat(amountPaid);
 
-    const sessionCharges = {
-      "1 session": 1250,
-      "12 sessions": 12500,
-      "24 sessions": 19500,
-      "12 sessions (couple)": 19000,
-      "24 sessions (couple)": 30000,
-    };
-
-    // Calculate total amount
-    const totalAmount = planCharges[plan] + (sessionType ? sessionCharges[sessionType] : 0);
-    const debt = totalAmount - amountPaid;
+    // Calculate total amount and debt
+    const totalAmount = planCostNum + sessionCostNum;
+    const debt = totalAmount - amountPaidNum;
 
     // Create customer object
     const customer = new Customer({
@@ -44,6 +33,7 @@ exports.createCustomer = async (req, res) => {
 
 
 
+// Get all customers with optional filters
 // Get all customers with optional filters
 exports.getAllCustomers = async (req, res) => {
   try {
@@ -72,7 +62,7 @@ exports.getAllCustomers = async (req, res) => {
     }
 
     if (all === 'true') {
-      const customers = await Customer.find(query);
+      const customers = await Customer.find(query).sort({ createdAt: -1 }); // Sort by newest first
       res.status(200).json({
         customers,
         total: customers.length,
@@ -85,7 +75,10 @@ exports.getAllCustomers = async (req, res) => {
       const skip = (pageNum - 1) * limitNum;
 
       const [customers, totalCustomers] = await Promise.all([
-        Customer.find(query).skip(skip).limit(limitNum),
+        Customer.find(query)
+          .sort({ createdAt: -1 }) // Sort by newest first
+          .skip(skip)
+          .limit(limitNum),
         Customer.countDocuments(query),
       ]);
 
@@ -100,6 +93,7 @@ exports.getAllCustomers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
@@ -136,5 +130,103 @@ exports.deleteCustomer = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.deleteAllCustomers = async (req, res) => {
+  try {
+    const result = await Customer.deleteMany({});
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "No customers found to delete" });
+    }
+    res.status(200).json({ message: "All customers deleted successfully", deletedCount: result.deletedCount });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Get revenue based on filters
+exports.getRevenue = async (req, res) => {
+  try {
+    const { filter, year, month } = req.query;
+    const match = {};
+
+    // Apply date filters
+    if (filter === "last7Days") {
+      match.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+      };
+    } else if (filter === "last30Days") {
+      match.createdAt = {
+        $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
+      };
+    } else if (filter === "specificMonth" && year && month) {
+      const start = new Date(year, month - 1, 1); // month is 0-indexed
+      const end = new Date(year, month, 1);
+      match.createdAt = {
+        $gte: start,
+        $lt: end,
+      };
+    }
+
+    // Aggregate revenue
+    const revenue = await Customer.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$amountPaid" },
+          membershipRevenue: { $sum: "$planCost" },
+          sessionRevenue: { $sum: "$sessionCost" },
+        },
+      },
+    ]);
+
+    // Handle case when no data is returned
+    if (revenue.length === 0) {
+      return res.status(200).json({
+        totalRevenue: 0,
+        membershipRevenue: 0,
+        sessionRevenue: 0,
+      });
+    }
+
+    res.status(200).json({
+      totalRevenue: revenue[0].totalRevenue,
+      membershipRevenue: revenue[0].membershipRevenue,
+      sessionRevenue: revenue[0].sessionRevenue,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// controllers/customerController.js
+
+
+
+exports.getExpiringMemberships = async (req, res) => {
+  try {
+    // Get the current date and the date 7 days from now
+    const today = moment().startOf('day');
+    const nextWeek = moment().add(7, 'days').endOf('day');
+
+    // Find customers whose membership end date falls within the next 7 days
+    const expiringCustomers = await Customer.find({
+      membershipEndDate: {
+        $gte: today.toDate(),
+        $lte: nextWeek.toDate(),
+      },
+    });
+
+    // Send the expiring customers as the response
+    res.status(200).json(expiringCustomers);
+  } catch (error) {
+    console.error("Error fetching expiring memberships:", error);
+    res.status(500).json({ error: "Failed to fetch expiring memberships" });
+  }
+};
+
+
 
 

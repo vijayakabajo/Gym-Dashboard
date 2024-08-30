@@ -20,7 +20,7 @@ const Mapping = () => {
 
     // Fetch customers
     axios.get("http://localhost:8000/api/customer?all=true")
-      .then((response) => setCustomers(response.data.customers.reverse()))
+      .then((response) => setCustomers(response.data.customers))
       .catch((error) => console.error(error));
   }, []);
 

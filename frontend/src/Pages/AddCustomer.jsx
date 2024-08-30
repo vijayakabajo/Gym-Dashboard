@@ -11,7 +11,9 @@ const AddCustomer = () => {
     mobileNumber: "",
     address: "",
     plan: "",
+    planCost: 0,
     sessionType: "",
+    sessionCost: 0,
     assignedEmployees: [],
     totalAmount: 0,
     amountPaid: 0,
@@ -19,23 +21,7 @@ const AddCustomer = () => {
   });
 
   const [selectedEmployees, setSelectedEmployees] = useState([]);
-
-  const plans = {
-    "per day": 750,
-    "1 month": 7500,
-    "3 months": 17000,
-    "6 months": 22000,
-    "12 months": 27500,
-  };
-
-  const sessions = {
-    "1 session": 1250,
-    "12 sessions": 12500,
-    "24 sessions": 19500,
-    "12 sessions (couple)": 19000,
-    "24 sessions (couple)": 30000,
-  };
-
+  const [showSessionOptions, setShowSessionOptions] = useState(false);
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
@@ -61,28 +47,36 @@ const AddCustomer = () => {
     }));
 
     // Calculate totals only when the relevant fields change
-    if (name === "plan" || name === "sessionType" || name === "amountPaid") {
+    if (
+      name === "planCost" ||
+      name === "sessionCost" ||
+      name === "amountPaid"
+    ) {
       calculateTotal({ ...formData, [name]: value });
     }
   };
 
+  const handleCheckboxChange = (event) => {
+    setShowSessionOptions(event.target.checked);
+  };
+
   const calculateTotal = (updatedFormData) => {
     let total = 0;
-    const { plan, sessionType, amountPaid } = updatedFormData;
-
+    const { plan, sessionType, amountPaid, planCost, sessionCost } = updatedFormData;
+  
     // Add plan amount if selected
     if (plan) {
-      total += plans[plan];
+      total += parseFloat(planCost) || plans[plan];
     }
-
+  
     // Add session amount if selected
     if (sessionType) {
-      total += sessions[sessionType];
+      total += parseFloat(sessionCost) || sessions[sessionType];
     }
-
+  
     // Calculate the debt
     const debt = total - (amountPaid ? parseFloat(amountPaid) : 0);
-
+  
     // Update the formData state
     setFormData((prevState) => ({
       ...prevState,
@@ -90,28 +84,30 @@ const AddCustomer = () => {
       debt: debt,
     }));
   };
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const assignedEmployees = selectedEmployees.map((emp) => emp.value);
 
-    // Prepare the data to be sent, excluding sessionType if not selected
+    // Prepare the data to be sent
     const dataToSend = {
       fullname: formData.fullname,
       emailId: formData.emailId,
       mobileNumber: formData.mobileNumber,
       address: formData.address,
       plan: formData.plan,
+      planCost: formData.planCost,
       totalAmount: formData.totalAmount,
       amountPaid: formData.amountPaid,
       debt: formData.debt,
       assignedEmployees: assignedEmployees,
     };
 
-    // Include sessionType only if it is selected
-    if (formData.sessionType) {
+    if (showSessionOptions) {
       dataToSend.sessionType = formData.sessionType;
+      dataToSend.sessionCost = formData.sessionCost;
     }
 
     try {
@@ -126,13 +122,16 @@ const AddCustomer = () => {
         mobileNumber: "",
         address: "",
         plan: "",
+        planCost: 0,
         sessionType: "",
+        sessionCost: 0,
         assignedEmployees: [],
         totalAmount: 0,
         amountPaid: 0,
         debt: 0,
       });
       setSelectedEmployees([]);
+      setShowSessionOptions(false);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert(
@@ -142,7 +141,6 @@ const AddCustomer = () => {
   };
 
   // UI PART
-
   return (
     <div className="h-[800] ml-1 p-4 sm:p-10 overflow-y-auto">
       <div className="min-h-screen text-white bg-stone-700 bg-opacity-50 rounded-lg p-4 sm:p-8">
@@ -200,8 +198,8 @@ const AddCustomer = () => {
             />
           </Form.Group>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-           <Form.Group controlId="formBasicPlan" className="w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <Form.Group controlId="formBasicPlan" className="w-full">
               <Form.Label>Membership Plan</Form.Label>
               <Form.Control
                 as="select"
@@ -211,47 +209,85 @@ const AddCustomer = () => {
                 required
               >
                 <option value="">Select Plan</option>
-                {Object.keys(plans).map((plan) => (
-                  <option key={plan} value={plan}>
-                    {plan}
-                  </option>
-                ))}
+                <option value="per day">Per Day</option>
+                <option value="1 month">1 Month</option>
+                <option value="3 months">3 Months</option>
+                <option value="6 months">6 Months</option>
+                <option value="12 months">12 Months</option>
               </Form.Control>
             </Form.Group>
 
-            <Form.Group controlId="formBasicSession" className="w-full">
-              <Form.Label>Session Type</Form.Label>
+            <Form.Group controlId="formBasicPlanCost" className="w-full">
+              <Form.Label>Plan Cost</Form.Label>
               <Form.Control
-                as="select"
-                name="sessionType"
-                value={formData.sessionType}
+                type="number"
+                name="planCost"
+                value={formData.planCost}
                 onChange={handleChange}
-              >
-                <option value="">Select Session</option>
-                {Object.keys(sessions).map((session) => (
-                  <option key={session} value={session}>
-                    {session}
-                  </option>
-                ))}
-              </Form.Control>
+                required
+              />
             </Form.Group>
           </div>
 
-          <Form.Group className="mb-3" controlId="formBasicEmployee">
-            <Form.Label>Assign Personal Trainer</Form.Label>
-            <Select
-              value={selectedEmployees}
-              onChange={setSelectedEmployees}
-              options={employees.map((employee) => ({
-                value: employee._id,
-                label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`,
-              }))}
-              placeholder="Search and select personal trainer"
-              isMulti
-              isSearchable
-              className="text-black"
+          <Form.Group controlId="formBasicShowSession" className="mb-3">
+            <Form.Check
+              type="checkbox"
+              label="Include Session Type"
+              checked={showSessionOptions}
+              onChange={handleCheckboxChange}
             />
           </Form.Group>
+
+          {showSessionOptions && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+              <Form.Group controlId="formBasicSessionType" className="w-full">
+                <Form.Label>Session Type</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="sessionType"
+                  value={formData.sessionType}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Session</option>
+                  <option value="1 session">1 Session</option>
+                  <option value="12 sessions">12 Sessions</option>
+                  <option value="24 sessions">24 Sessions</option>
+                  <option value="12 sessions (couple)">
+                    12 Sessions (Couple)
+                  </option>
+                  <option value="24 sessions (couple)">
+                    24 Sessions (Couple)
+                  </option>
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="formBasicSessionCost" className="w-full">
+                <Form.Label>Session Cost</Form.Label>
+                <Form.Control
+                  type="number"
+                  name="sessionCost"
+                  value={formData.sessionCost}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="formBasicEmployee" className="w-full">
+                <Form.Label>Assign Personal Trainer</Form.Label>
+                <Select
+                  value={selectedEmployees}
+                  onChange={setSelectedEmployees}
+                  options={employees.map((employee) => ({
+                    value: employee._id,
+                    label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`,
+                  }))}
+                  placeholder="Search and select personal trainer"
+                  isMulti
+                  isSearchable
+                  className="text-black"
+                />
+              </Form.Group>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
             <Form.Group controlId="formBasicTotalAmount" className="w-full">
@@ -300,3 +336,4 @@ const AddCustomer = () => {
 };
 
 export default AddCustomer;
+

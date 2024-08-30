@@ -56,7 +56,7 @@ exports.getAllEmployees = async (req, res) => {
       const skip = (pageNum - 1) * limitNum;
 
       const [employees, totalEmployees] = await Promise.all([
-        Employee.find(query).skip(skip).limit(limitNum),
+        Employee.find(query).sort({ createdAt: -1 }).skip(skip).limit(limitNum),
         Employee.countDocuments(query),
       ]);
 
@@ -102,6 +102,18 @@ exports.deleteEmployee = async (req, res) => {
     const employee = await Employee.findByIdAndDelete(req.params.id);
     if (!employee) return res.status(404).json({ message: "Employee not found" });
     res.status(200).json({ message: "Employee deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteAllCustomers = async (req, res) => {
+  try {
+    const result = await Employee.deleteMany({});
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "No customers found to delete" });
+    }
+    res.status(200).json({ message: "All Employees deleted successfully", deletedCount: result.deletedCount });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

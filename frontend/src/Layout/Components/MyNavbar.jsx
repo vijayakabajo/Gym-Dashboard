@@ -30,7 +30,7 @@ const MyNavbar = () => {
       <div className="flex items-center">
         {/* <a className="font-[600] text-[2rem]">beenaIT</a> */}
 
-        <img src="/Logo.png" alt="Logo" className="h-12 animate-pulse ripple" />
+        <img src="/Logo.png" alt="Logo" className="h-12" />
 
         {/* 
         <a className="ml-16">
