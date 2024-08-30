@@ -8,7 +8,7 @@ const SideBar = () => {
       <div className="mx-2 hover:bg-stone-400 hover:bg-opacity-40 px-2 rounded-lg">
         <div className="flex justify-start items-center">
           <div className="rounded-full overflow-hidden h-8">
-            <img src="/chart.gif" alt="Description of GIF" className="h-8" />
+            <img src="/calendar.gif" alt="Description of GIF" className="h-8" />
           </div>
           <div>
             <p

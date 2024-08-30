@@ -49,8 +49,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-blue">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-[28rem] m-4">
+    <div className="flex items-center justify-center bg-stone-800">
+      <div className="bg-stone-700 bg-opacity-70 text-white rounded-lg shadow-lg p-8 w-[28rem] m-4">
         <div>
           <h1 className="text-3xl font-bold py-2 text-center mb-6">Add New Personal Trainer</h1>
 

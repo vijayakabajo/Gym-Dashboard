@@ -31,8 +31,8 @@ const Login = () => {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-blue">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-96">
+    <div className="flex items-center justify-center h-screen bg-stone-800">
+      <div className="bg-stone-700 bg-opacity-70 text-white rounded-lg shadow-lg p-8 w-96">
         <div>
           <h1 className="text-[2.5rem] font-bold py-3 text-center">Sign In</h1>
           <Form onSubmit={handleSubmit}>

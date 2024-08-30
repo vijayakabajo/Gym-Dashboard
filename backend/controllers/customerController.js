@@ -34,7 +34,6 @@ exports.createCustomer = async (req, res) => {
 
 
 // Get all customers with optional filters
-// Get all customers with optional filters
 exports.getAllCustomers = async (req, res) => {
   try {
     const { search, filter, page = 1, limit = 8, all } = req.query;
@@ -131,6 +130,8 @@ exports.deleteCustomer = async (req, res) => {
   }
 };
 
+
+//DELETE ALL FOR DEV
 exports.deleteAllCustomers = async (req, res) => {
   try {
     const result = await Customer.deleteMany({});
@@ -148,25 +149,24 @@ exports.deleteAllCustomers = async (req, res) => {
 exports.getRevenue = async (req, res) => {
   try {
     const { filter, year, month } = req.query;
-    const match = {};
+    let start, end;
+    
+    // Determine date range based on filter or default to current month
+    if (filter === "specificMonth" && year && month) {
+      start = new Date(year, month - 1, 1); // month is 0-indexed
+      end = new Date(year, month, 1);
+    } else {
+      // Default to current month if no specific filter is provided
+      start = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      end = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+    }
 
-    // Apply date filters
-    if (filter === "last7Days") {
-      match.createdAt = {
-        $gte: new Date(new Date().setDate(new Date().getDate() - 7)),
-      };
-    } else if (filter === "last30Days") {
-      match.createdAt = {
-        $gte: new Date(new Date().setDate(new Date().getDate() - 30)),
-      };
-    } else if (filter === "specificMonth" && year && month) {
-      const start = new Date(year, month - 1, 1); // month is 0-indexed
-      const end = new Date(year, month, 1);
-      match.createdAt = {
+    const match = {
+      createdAt: {
         $gte: start,
         $lt: end,
-      };
-    }
+      },
+    };
 
     // Aggregate revenue
     const revenue = await Customer.aggregate([
@@ -201,10 +201,10 @@ exports.getRevenue = async (req, res) => {
 };
 
 
-// controllers/customerController.js
 
 
 
+// Expiring Clients
 exports.getExpiringMemberships = async (req, res) => {
   try {
     // Get the current date and the date 7 days from now
