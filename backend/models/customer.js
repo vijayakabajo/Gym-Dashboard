@@ -64,6 +64,24 @@ const customerSchema = new mongoose.Schema(
         return this.totalAmount - this.amountPaid;
       },
     },
+    membershipStartDate: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+    membershipEndDate: {
+      type: Date,
+      required: true,
+      default: function () {
+        const planDurations = {
+          "1 month": 1,
+          "3 months": 3,
+          "6 months": 6,
+          "12 months": 12,
+        };
+        return new Date(new Date(this.membershipStartDate).setMonth(new Date(this.membershipStartDate).getMonth() + planDurations[this.plan]));
+      },
+    },
   },
   {
     timestamps: true,

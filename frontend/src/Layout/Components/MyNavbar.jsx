@@ -70,6 +70,13 @@ const MyNavbar = () => {
           </Dropdown.Item>
           <Dropdown.Item
             href="#/action-1"
+            className="hover:bg-stone-800 hover:bg-opacity-10 text-white block md:hidden"
+            onClick={() => navigate("/expiration")}
+          >
+            Expiration
+          </Dropdown.Item>
+          <Dropdown.Item
+            href="#/action-1"
             className="hover:bg-stone-800 hover:bg-opacity-10 text-white"
             onClick={() => navigate("/profile")}
           >

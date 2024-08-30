@@ -218,11 +218,27 @@ exports.getExpiringMemberships = async (req, res) => {
         $lte: nextWeek.toDate(),
       },
     });
+    console.log(expiringCustomers);
 
     // Send the expiring customers as the response
     res.status(200).json(expiringCustomers);
   } catch (error) {
     console.error("Error fetching expiring memberships:", error);
+    res.status(500).json({ error: "Failed to fetch expiring memberships" });
+  }
+};
+
+exports.getExpiringMemberships = async (req, res) => {
+  try {
+    const today = new Date();
+    const tenDaysFromNow = new Date(today.setDate(today.getDate() + 10));
+
+    const expiringCustomers = await Customer.find({
+      membershipEndDate: { $gte: today, $lte: tenDaysFromNow },
+    });
+
+    res.status(200).json(expiringCustomers);
+  } catch (err) {
     res.status(500).json({ error: "Failed to fetch expiring memberships" });
   }
 };

@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 
 router.get("/revenue", customerController.getRevenue);
 router.get('/expiring', customerController.getExpiringMemberships);
+router.get("/expiring-memberships", customerController.getExpiringMemberships);
 
 router.post("/", customerController.createCustomer);
 router.get("/", customerController.getAllCustomers);

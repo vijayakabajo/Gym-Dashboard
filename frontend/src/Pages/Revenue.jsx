@@ -40,7 +40,7 @@ const RevenuePage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between flex-col md:flex-row mb-6 gap-y-3">
         <div className="flex justify-center items-center gap-x-2">
           <div className="rounded-full overflow-hidden mr-2">
             <img src="revenue.gif" alt="Calendar" className="h-9" />
