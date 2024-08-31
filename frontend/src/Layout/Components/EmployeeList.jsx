@@ -9,9 +9,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
   const [employees, setEmployees] = useState([]);
   const [role, setRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployeeCustomers, setSelectedEmployeeCustomers] = useState(
-    []
-  );
+  const [selectedEmployeeCustomers, setSelectedEmployeeCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [selectedEmployeeName, setSelectedEmployeeName] = useState("");
@@ -40,6 +38,11 @@ const EmployeeList = ({ searchQuery, filter }) => {
 
     fetchEmployees();
   }, [searchQuery, filter, page]); // Include 'page' in the dependency array
+
+  useEffect(() => {
+    // Reset page to 1 whenever searchQuery or filter changes
+    setPage(1);
+  }, [searchQuery, filter]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -80,7 +83,6 @@ const EmployeeList = ({ searchQuery, filter }) => {
       const response = await axios.get(
         `http://localhost:8000/api/employee/${employee._id}/customers`
       );
-
       setSelectedEmployeeCustomers(response.data);
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -135,9 +137,6 @@ const EmployeeList = ({ searchQuery, filter }) => {
               <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
                 Role
               </th>
-              <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
-                Since
-              </th>
               <th className="px-3 py-2 text-center text-base font-medium uppercase tracking-wider">
                 Clients
               </th>
@@ -165,28 +164,12 @@ const EmployeeList = ({ searchQuery, filter }) => {
                   <td className="px-3 py-2 whitespace-nowrap capitalize">
                     {employee.role}
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    {new Date(employee.createdAt).toLocaleDateString("en-GB")}
-                  </td>
                   <td className="px-3 py-2 whitespace-nowrap flex items-center justify-center">
                     <button
                       className="bg-stone-600 text-white text-sm px-3 py-2 rounded-lg hover:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500"
                       onClick={() => openModal(employee)}
-                      title={`View customers of ${employee.fullname}`}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M8.25 6.75a3.75 3.75 0 117.5 0 3.75 3.75 0 01-7.5 0zM15.75 9.75a3 3 0 116 0 3 3 0 01-6 0zM2.25 9.75a3 3 0 116 0 3 3 0 01-6 0zM6.31 15.117A6.745 6.745 0 0112 12a6.745 6.745 0 016.709 7.498.75.75 0 01-.372.568A12.696 12.696 0 0112 21.75c-2.305 0-4.47-.612-6.337-1.684a.75.75 0 01-.372-.568 6.787 6.787 0 011.019-4.38z"
-                          clipRule="evenodd"
-                        />
-                        <path d="M5.082 14.254a8.287 8.287 0 00-1.308 5.135 9.687 9.687 0 01-1.764-.44l-.115-.04a.563.563 0 01-.373-.487l-.01-.121a3.75 3.75 0 013.57-4.047zM20.226 19.389a8.287 8.287 0 00-1.308-5.135 3.75 3.75 0 013.57 4.047l-.01.121a.563.563 0 01-.373.486l-.115.04c-.567.2-1.156.349-1.764.441z" />
-                      </svg>
+                      View Clients
                     </button>
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
@@ -203,7 +186,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
             ) : (
               <tr>
                 <td
-                  colSpan="8"
+                  colSpan="7"
                   className="px-3 py-2 text-center text-base font-medium text-red-600"
                 >
                   No employees found.
@@ -240,9 +223,8 @@ const EmployeeList = ({ searchQuery, filter }) => {
           Next
         </button>
       </div>
-
-      {/* Modal for displaying employee's customers */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
+       {/* Modal for displaying employee's customers */}
+       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {loadingCustomers ? (
           <div className="flex justify-center items-center h-64">
             <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>

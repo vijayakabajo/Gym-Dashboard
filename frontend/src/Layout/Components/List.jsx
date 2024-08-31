@@ -7,9 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 const List = ({ searchQuery, filter }) => {
   const [customers, setCustomers] = useState([]);
   const [role, setRole] = useState("");
-  const [page, setPage] = useState(1); // State for the current page
-  const [totalPages, setTotalPages] = useState(1); // State for the total number of pages
-  const limit = 7; // Items per page
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 7;
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -23,7 +23,7 @@ const List = ({ searchQuery, filter }) => {
           },
         });
         setCustomers(response.data.customers);
-        setTotalPages(Math.ceil(response.data.total / limit)); // Calculate total pages based on response
+        setTotalPages(Math.ceil(response.data.total / limit));
       } catch (error) {
         console.error("Error fetching customer data:", error);
         toast.error("Failed to fetch customers.");
@@ -31,10 +31,10 @@ const List = ({ searchQuery, filter }) => {
     };
 
     fetchCustomers();
-  }, [searchQuery, filter, page]); // Include 'page' in the dependency array
+  }, [searchQuery, filter, page]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // assuming you store the token in localStorage
+    const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -45,6 +45,11 @@ const List = ({ searchQuery, filter }) => {
       }
     }
   }, []);
+
+  // Reset the page to 1 whenever searchQuery or filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, filter]);
 
   const handleDelete = async (id) => {
     if (role !== "admin") {

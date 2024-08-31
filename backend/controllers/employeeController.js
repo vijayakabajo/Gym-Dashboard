@@ -74,6 +74,9 @@ exports.getAllEmployees = async (req, res) => {
 
 
 
+
+
+
 // Get an employee by ID
 exports.getEmployeeById = async (req, res) => {
   try {
@@ -107,7 +110,7 @@ exports.deleteEmployee = async (req, res) => {
   }
 };
 
-exports.deleteAllCustomers = async (req, res) => {
+exports.deleteAllEmployee = async (req, res) => {
   try {
     const result = await Employee.deleteMany({});
     if (result.deletedCount === 0) {
