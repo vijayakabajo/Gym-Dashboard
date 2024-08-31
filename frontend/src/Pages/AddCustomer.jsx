@@ -3,9 +3,15 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
+import { useNavigate } from 'react-router-dom';
+
+
 
 // Logic Part
 const AddCustomer = () => {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     fullname: "",
     emailId: "",
@@ -97,10 +103,9 @@ const AddCustomer = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     const assignedEmployees = selectedEmployees.map((emp) => emp.value);
-
-    // Prepare the data to be sent
+  
     const dataToSend = {
       fullname: formData.fullname,
       emailId: formData.emailId,
@@ -113,34 +118,19 @@ const AddCustomer = () => {
       debt: formData.debt,
       assignedEmployees: assignedEmployees,
     };
-
+  
     if (showSessionOptions) {
       dataToSend.sessionType = formData.sessionType;
       dataToSend.sessionCost = formData.sessionCost;
     }
-
+  
     try {
-      await axios.post("http://localhost:8000/api/customer", dataToSend, {
+      const response = await axios.post("http://localhost:8000/api/customer", dataToSend, {
         headers: { "Content-Type": "application/json" },
       });
-
+  
       alert("Customer data submitted successfully!");
-      setFormData({
-        fullname: "",
-        emailId: "",
-        mobileNumber: "",
-        address: "",
-        plan: "",
-        planCost: 0,
-        sessionType: "",
-        sessionCost: 0,
-        assignedEmployees: [],
-        totalAmount: 0,
-        amountPaid: 0,
-        debt: 0,
-      });
-      setSelectedEmployees([]);
-      setShowSessionOptions(false);
+      navigate(`/client/${response.data._id}`, { state: response.data });
     } catch (error) {
       console.error("Error submitting form:", error);
       alert(

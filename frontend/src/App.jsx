@@ -10,6 +10,7 @@ import Role from "./Pages/Role";
 import Signup from "./Pages/Signup";
 import Profile from "./Pages/Profile";
 import Expiration from "./Pages/Expiration"
+import ClientInfo from "./Layout/Components/ClientInfo"
 import ProtectedRoute from "./Layout/Components/ProtectedRoute";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -33,6 +34,7 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute Component={() => <Layout Maincontent={Profile} />} />} />
         <Route path="/role" element={<ProtectedRoute Component={Role} />} />
         <Route path="/expiration" element={<ProtectedRoute Component={() => <Layout Maincontent={Expiration} />} />} />
+        <Route path="/client/:id" element={<ProtectedRoute Component={() => <Layout Maincontent={ClientInfo} />} />} />
       </Routes>
     </BrowserRouter>
   );
