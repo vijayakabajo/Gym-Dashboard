@@ -60,7 +60,7 @@ const Mapping = () => {
 
 
           <Form.Group className="mb-3 text-black" controlId="formCustomerSelect">
-            <Form.Label className="text-white">Search and Select Customer</Form.Label>
+            <Form.Label className="text-white">Search and Select Client</Form.Label>
             <Select
               value={selectedCustomer}
               onChange={setSelectedCustomer}
@@ -68,7 +68,7 @@ const Mapping = () => {
                 value: customer._id,
                 label: `${customer.fullname} (Phone Number: ${customer.mobileNumber})`
               }))}
-              placeholder="Search and select a customer"
+              placeholder="Search and select a client"
               isSearchable
             />
           </Form.Group>

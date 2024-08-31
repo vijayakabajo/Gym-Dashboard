@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
 
+// Logic Part
 const AddCustomer = () => {
   const [formData, setFormData] = useState({
     fullname: "",
@@ -58,25 +59,34 @@ const AddCustomer = () => {
 
   const handleCheckboxChange = (event) => {
     setShowSessionOptions(event.target.checked);
+
+    // If unchecking the session options, recalculate total without session cost
+    if (!event.target.checked) {
+      calculateTotal({
+        ...formData,
+        sessionType: "",
+        sessionCost: 0,
+      });
+    }
   };
 
   const calculateTotal = (updatedFormData) => {
     let total = 0;
     const { plan, sessionType, amountPaid, planCost, sessionCost } = updatedFormData;
-  
+
     // Add plan amount if selected
     if (plan) {
-      total += parseFloat(planCost) || plans[plan];
+      total += parseFloat(planCost) || 0;
     }
-  
+
     // Add session amount if selected
     if (sessionType) {
-      total += parseFloat(sessionCost) || sessions[sessionType];
+      total += parseFloat(sessionCost) || 0;
     }
-  
+
     // Calculate the debt
     const debt = total - (amountPaid ? parseFloat(amountPaid) : 0);
-  
+
     // Update the formData state
     setFormData((prevState) => ({
       ...prevState,
@@ -84,7 +94,6 @@ const AddCustomer = () => {
       debt: debt,
     }));
   };
-  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -224,6 +233,7 @@ const AddCustomer = () => {
                 name="planCost"
                 value={formData.planCost}
                 onChange={handleChange}
+                disabled={!formData.plan} // Disable if no plan selected
                 required
               />
             </Form.Group>
@@ -247,6 +257,7 @@ const AddCustomer = () => {
                   name="sessionType"
                   value={formData.sessionType}
                   onChange={handleChange}
+                  disabled={!showSessionOptions} // Disable if session type not selected
                 >
                   <option value="">Select Session</option>
                   <option value="1 session">1 Session</option>
@@ -268,22 +279,24 @@ const AddCustomer = () => {
                   name="sessionCost"
                   value={formData.sessionCost}
                   onChange={handleChange}
+                  disabled={!formData.sessionType} // Disable if no session selected
                 />
               </Form.Group>
 
-              <Form.Group controlId="formBasicEmployee" className="w-full">
-                <Form.Label>Assign Personal Trainer</Form.Label>
+              <Form.Group controlId="formBasicAssignedEmployees" className="w-full">
+                <Form.Label>Assigned Personal Trainer(s)</Form.Label>
                 <Select
-                  value={selectedEmployees}
-                  onChange={setSelectedEmployees}
+                  isMulti
+                  name="assignedEmployees"
                   options={employees.map((employee) => ({
                     value: employee._id,
-                    label: `${employee.fullname} (Phone Number: ${employee.mobileNumber})`,
+                    label: `${employee.fullname} (${employee.mobileNumber})`,
                   }))}
-                  placeholder="Search and select personal trainer"
-                  isMulti
-                  isSearchable
-                  className="text-black"
+                  value={selectedEmployees}
+                  onChange={setSelectedEmployees}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  isDisabled={!formData.sessionType} // Disable if no session selected
                 />
               </Form.Group>
             </div>
@@ -297,8 +310,7 @@ const AddCustomer = () => {
                 name="totalAmount"
                 value={formData.totalAmount}
                 onChange={handleChange}
-                readOnly
-                className="bg-gray-200"
+                disabled
               />
             </Form.Group>
 
@@ -309,7 +321,6 @@ const AddCustomer = () => {
                 name="amountPaid"
                 value={formData.amountPaid}
                 onChange={handleChange}
-                className="w-full"
               />
             </Form.Group>
 
@@ -320,13 +331,12 @@ const AddCustomer = () => {
                 name="debt"
                 value={formData.debt}
                 onChange={handleChange}
-                readOnly
-                className="bg-gray-200"
+                disabled
               />
             </Form.Group>
           </div>
 
-          <Button variant="primary" type="submit" className="w-full mt-4">
+          <Button variant="primary" type="submit" className="w-full">
             Submit
           </Button>
         </Form>
@@ -336,4 +346,3 @@ const AddCustomer = () => {
 };
 
 export default AddCustomer;
-
