@@ -281,7 +281,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
                     <strong>Address:</strong> {selectedCustomer.address}
                   </p>
                   <p>
-                    <strong>Time:</strong> {selectedCustomer.time}
+                    <strong>Plan:</strong> {selectedCustomer.plan}
                   </p>
                 </div>
               )}

@@ -1,13 +1,35 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import axios from "axios";
 
 const ClientDetails = () => {
   const { state: clientData } = useLocation();
+  const [employeeNames, setEmployeeNames] = useState([]);
+
+  useEffect(() => {
+    const fetchEmployeeNames = async () => {
+      try {
+        const employeeNamesArray = await Promise.all(
+          clientData.assignedEmployees.map(async (employeeId) => {
+            const response = await axios.get(`http://localhost:8000/api/employee/${employeeId}`);
+            return response.data.fullname;
+          })
+        );
+        setEmployeeNames(employeeNamesArray);
+      } catch (error) {
+        console.error("Error fetching employee names:", error);
+      }
+    };
+
+    if (clientData.assignedEmployees.length > 0) {
+      fetchEmployeeNames();
+    }
+  }, [clientData.assignedEmployees]);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
@@ -15,7 +37,7 @@ const ClientDetails = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(18);
-    doc.text('Client Information', 14, 22);
+    doc.text("Client Information", 14, 22);
 
     doc.setFontSize(12);
     const tableColumn = ["Field", "Details"];
@@ -25,17 +47,25 @@ const ClientDetails = () => {
     tableRows.push(["Email", clientData.emailId]);
     tableRows.push(["Mobile Number", clientData.mobileNumber]);
     tableRows.push(["Address", clientData.address]);
-    tableRows.push(["Assigned Employees", clientData.assignedEmployees.length > 0 ? clientData.assignedEmployees.join(', ') : 'None']);
-    tableRows.push(["Plan", clientData.plan]);
-    tableRows.push(["Plan Cost", `₹${clientData.planCost}`]);
+    tableRows.push([
+      "Personal Trainers",
+      employeeNames.length > 0 ? employeeNames.join(", ") : "None",
+    ]);
+    tableRows.push(["Membership Plan", clientData.plan]);
+    tableRows.push(["Membership Plan Cost", `${clientData.planCost}/-`]);
     tableRows.push(["Session Type", clientData.sessionType]);
-    tableRows.push(["Session Cost", `₹${clientData.sessionCost}`]);
-    tableRows.push(["Status", clientData.status]);
-    tableRows.push(["Total Amount", `₹${clientData.totalAmount}`]);
-    tableRows.push(["Amount Paid", `₹${clientData.amountPaid}`]);
-    tableRows.push(["Debt", `₹${clientData.debt}`]);
-    tableRows.push(["Membership Start Date", formatDate(clientData.membershipStartDate)]);
-    tableRows.push(["Membership End Date", formatDate(clientData.membershipEndDate)]);
+    tableRows.push(["Session Cost", `${clientData.sessionCost}/-`]);
+    tableRows.push(["Total Amount", `${clientData.totalAmount}/-`]);
+    tableRows.push(["Amount Paid", `${clientData.amountPaid}/-`]);
+    tableRows.push(["Debt", `${clientData.debt}/-`]);
+    tableRows.push([
+      "Membership Start Date",
+      formatDate(clientData.membershipStartDate),
+    ]);
+    tableRows.push([
+      "Membership End Date",
+      formatDate(clientData.membershipEndDate),
+    ]);
 
     doc.autoTable({
       head: [tableColumn],
@@ -48,27 +78,59 @@ const ClientDetails = () => {
 
   return (
     <div className="p-4 text-white text-lg bg-gray-800 rounded-md shadow-lg">
-      <h2 className="font-bold text-3xl mb-5">Client Details</h2>
-      <div className="mb-4">
-        <p><strong>Name:</strong> {clientData.fullname}</p>
-        <p><strong>Email:</strong> {clientData.emailId}</p>
-        <p><strong>Mobile Number:</strong> {clientData.mobileNumber}</p>
-        <p><strong>Address:</strong> {clientData.address}</p>
-        <p><strong>Assigned Employees:</strong> {clientData.assignedEmployees.length > 0 ? clientData.assignedEmployees.join(', ') : 'None'}</p>
-        <p><strong>Plan:</strong> {clientData.plan}</p>
-        <p><strong>Plan Cost:</strong> ₹{clientData.planCost}</p>
-        <p><strong>Session Type:</strong> {clientData.sessionType}</p>
-        <p><strong>Session Cost:</strong> ₹{clientData.sessionCost}</p>
-        <p><strong>Status:</strong> {clientData.status}</p>
-        <p><strong>Total Amount:</strong> ₹{clientData.totalAmount}</p>
-        <p><strong>Amount Paid:</strong> ₹{clientData.amountPaid}</p>
-        <p><strong>Debt:</strong> ₹{clientData.debt}</p>
-        <p><strong>Membership Start Date:</strong> {formatDate(clientData.membershipStartDate)}</p>
-        <p><strong>Membership End Date:</strong> {formatDate(clientData.membershipEndDate)}</p>
+      <div className="flex flex-col justify-center items-center w-auto bg-stone-700 bg-opacity-70 p-3">
+        <h2 className="font-bold text-3xl mb-5">Client Details</h2>
+        <div className="mb-4">
+          <p>
+            <strong>Name:</strong> {clientData.fullname}
+          </p>
+          <p>
+            <strong>Email:</strong> {clientData.emailId}
+          </p>
+          <p>
+            <strong>Mobile Number:</strong> {clientData.mobileNumber}
+          </p>
+          <p>
+            <strong>Address:</strong> {clientData.address}
+          </p>
+          <p>
+            <strong>Personal Trainers:</strong>{" "}
+            {employeeNames.length > 0 ? employeeNames.join(", ") : "None"}
+          </p>
+          <p>
+            <strong>Membership Plan:</strong> {clientData.plan}
+          </p>
+          <p>
+            <strong>Membership Plan Cost:</strong> ₹{clientData.planCost}
+          </p>
+          <p>
+            <strong>Session Type:</strong> {clientData.sessionType}
+          </p>
+          <p>
+            <strong>Session Cost:</strong> ₹{clientData.sessionCost}
+          </p>
+          <p>
+            <strong>Total Amount:</strong> ₹{clientData.totalAmount}
+          </p>
+          <p>
+            <strong>Amount Paid:</strong> ₹{clientData.amountPaid}
+          </p>
+          <p>
+            <strong>Debt:</strong> ₹{clientData.debt}
+          </p>
+          <p>
+            <strong>Membership Start Date:</strong>{" "}
+            {formatDate(clientData.membershipStartDate)}
+          </p>
+          <p>
+            <strong>Membership End Date:</strong>{" "}
+            {formatDate(clientData.membershipEndDate)}
+          </p>
+        </div>
+        <button onClick={downloadPDF} className="btn btn-primary mt-4">
+          Download as PDF
+        </button>
       </div>
-      <button onClick={downloadPDF} className="btn btn-primary mt-4">
-        Download as PDF
-      </button>
     </div>
   );
 };

@@ -76,7 +76,7 @@ const Profile = () => {
               <p><strong>Email:</strong> {selectedCustomer.emailId}</p>
               <p><strong>Mobile:</strong> {selectedCustomer.mobileNumber}</p>
               <p className="capitalize"><strong>Address:</strong> {selectedCustomer.address}</p>
-              <p><strong>Time:</strong> {selectedCustomer.time}</p>
+              <p><strong>Plan:</strong> {selectedCustomer.plan}</p>
             </div>
           )}
         </div>

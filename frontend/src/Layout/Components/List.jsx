@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { Dialog, Transition } from "@headlessui/react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,6 +10,8 @@ const List = ({ searchQuery, filter }) => {
   const [role, setRole] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
   const limit = 7;
 
   useEffect(() => {
@@ -74,6 +77,16 @@ const List = ({ searchQuery, filter }) => {
     setPage(newPage);
   };
 
+  const openModal = (customer) => {
+    setSelectedCustomer(customer);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setSelectedCustomer(null);
+  };
+
   return (
     <div className="shadow-lg rounded-lg overflow-hidden min-h-full">
       <div className="overflow-x-auto">
@@ -93,7 +106,7 @@ const List = ({ searchQuery, filter }) => {
                 Address
               </th>
               <th className="px-3 py-2 text-left text-base font-medium uppercase tracking-wider">
-                Joined
+                Plan
               </th>
               <th className="px-3 py-2 text-center text-base font-medium uppercase tracking-wider">
                 Actions
@@ -104,7 +117,10 @@ const List = ({ searchQuery, filter }) => {
             {customers.length > 0 ? (
               customers.map((customer) => (
                 <tr key={customer._id}>
-                  <td className="px-3 py-2 whitespace-nowrap capitalize">
+                  <td
+                    onClick={() => openModal(customer)}
+                    className="px-3 py-2 whitespace-nowrap capitalize cursor-pointer hover:text-blue-400"
+                  >
                     {customer.fullname}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
@@ -117,7 +133,7 @@ const List = ({ searchQuery, filter }) => {
                     {customer.address}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
-                    {new Date(customer.createdAt).toLocaleDateString("en-GB")}
+                    {customer.plan}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap flex items-center justify-center">
                     <button
@@ -170,6 +186,115 @@ const List = ({ searchQuery, filter }) => {
           Next
         </button>
       </div>
+
+      {/* Modal */}
+      <Transition appear show={isOpen} as={React.Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={React.Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-stone-800 bg-opacity-40" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-full p-4 text-center">
+              <Transition.Child
+                as={React.Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-stone-800 bg-opacity-90 shadow-xl rounded-2xl">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-white flex flex-col justify-center items-center"
+                  >
+                    <p className="font-serif text-2xl font-bold">Client Details</p>
+                    <div className="rounded-full overflow-hidden mt-3">
+                      <img src="/gymmm.gif" alt="gif" className="h-36" />
+                    </div>
+                  </Dialog.Title>
+                  <div className="mt-4 text-white">
+                    {selectedCustomer && (
+                      <div className="space-y-2">
+                        <p className="capitalize">
+                          <strong>Name:</strong> {selectedCustomer.fullname}
+                        </p>
+                        <p>
+                          <strong>Mobile No.:</strong>{" "}
+                          {selectedCustomer.mobileNumber}
+                        </p>
+                        <p>
+                          <strong>Email ID:</strong> {selectedCustomer.emailId}
+                        </p>
+                        <p className="capitalize">
+                          <strong>Address:</strong> {selectedCustomer.address}
+                        </p>
+                        <p>
+                          <strong>Joined On:</strong>{" "}
+                          {new Date(
+                            selectedCustomer.createdAt
+                          ).toLocaleDateString("en-GB")}
+                        </p>
+                        <p>
+                          <strong>Membership Plan:</strong> {selectedCustomer.plan}
+                        </p>
+                        <p>
+                          <strong>Membership Plan Cost:</strong> {selectedCustomer.planCost}
+                        </p>
+                        <p>
+                          <strong>Session Type:</strong> {selectedCustomer.sessionType}
+                        </p>
+                        <p>
+                          <strong>Session Cost:</strong> {selectedCustomer.sessionCost}
+                        </p>
+                        <p>
+                          <strong>Total Cost:</strong> {selectedCustomer.totalAmount}
+                        </p>
+                        <p>
+                          <strong>Paid Amount:</strong> {selectedCustomer.amountPaid}
+                        </p>
+                        <p>
+                          <strong>Debt:</strong> {selectedCustomer.debt}
+                        </p>
+                        <p>
+                          <strong>Membership Start:</strong> {new Date(selectedCustomer.membershipStartDate).toLocaleDateString("en-GB")}
+                        </p>
+                        <p>
+                          <strong>Membership End:</strong> {new Date(selectedCustomer.membershipEndDate).toLocaleDateString("en-GB")}
+                        </p>
+                        <p className="capitalize">
+                          <strong>Status:</strong> {selectedCustomer.status}
+                        </p>
+            
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                      onClick={closeModal}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 };

@@ -284,7 +284,7 @@ const AddCustomer = () => {
                   }))}
                   value={selectedEmployees}
                   onChange={setSelectedEmployees}
-                  className="basic-multi-select"
+                  className="basic-multi-select text-black"
                   classNamePrefix="select"
                   isDisabled={!formData.sessionType} // Disable if no session selected
                 />

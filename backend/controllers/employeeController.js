@@ -110,6 +110,7 @@ exports.deleteEmployee = async (req, res) => {
   }
 };
 
+//delete All
 exports.deleteAllEmployee = async (req, res) => {
   try {
     const result = await Employee.deleteMany({});
