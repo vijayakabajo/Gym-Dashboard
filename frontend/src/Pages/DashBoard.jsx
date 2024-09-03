@@ -27,7 +27,7 @@ const DashBoard = () => {
             }}/>
             <Item data={{
                 img: HiXCircle,
-                name: "Expiration",
+                name: "Expirations",
                 redirectURL: "/expiration"
             }}/>
         </div>

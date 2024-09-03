@@ -27,7 +27,7 @@ const MyNavbar = () => {
 
   return (
     <nav className="flex justify-between items-center bg-[#574898] px-6 py-2">
-      <div className="flex items-center">
+      <div className="flex items-center" onClick={() => navigate("/")}>
         {/* <a className="font-[600] text-[2rem]">beenaIT</a> */}
 
         <img src="/Logo.png" alt="Logo" className="h-12" />

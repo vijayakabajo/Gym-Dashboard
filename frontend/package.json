@@ -15,6 +15,7 @@
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "dotenv": "^16.4.5",
+    "js-file-download": "^0.4.12",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.3",
     "jwt-decode": "^4.0.0",

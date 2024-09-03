@@ -4,6 +4,8 @@ import { Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import List from "../Layout/Components/List";
 import { useNavigate } from "react-router";
+import fileDownload from "js-file-download";
+import axios from "axios"
 
 const Customers = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +20,21 @@ const Customers = () => {
     setFilter(filterOption);
   };
 
+  const isActive = (option) => {
+    return filter === option ? "bg-stone-300" : "";
+  };
+
+  const handleExport = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/export/exportcustomers", {
+        responseType: "blob", // Important for file download
+      });
+      fileDownload(response.data, "customers.xlsx");
+    } catch (err) {
+      console.error("Error exporting customers:", err);
+    }
+  };
+
   return (
     <div className="h-screen ml-1 relative">
       <div className="max-h-dvh bg-gray-100 p-6">
@@ -26,7 +43,6 @@ const Customers = () => {
             <div className="rounded-full overflow-hidden mr-2">
               <img src="/gymmm.gif" alt="Description of GIF" className="h-9" />
             </div>
-
             <h1 className="text-3xl font-bold text-white">All Clients</h1>
           </div>
 
@@ -45,13 +61,13 @@ const Customers = () => {
               <FaPlus className="w-5 h-5" />
               <span>New Client</span>
             </button>
-            <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600">
+            <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600" onClick={handleExport}>
               <FaDownload className="w-5 h-5" />
               <span>Export</span>
             </button>
             <Menu as="div" className="relative">
               <div>
-                <Menu.Button className="px-4 py-2 rounded-lg flex items-center space-x-2 hover: bg-stone-200">
+                <Menu.Button className="px-4 py-2 rounded-lg flex items-center space-x-2 bg-stone-200">
                   <span>Filter By</span>
                   <ChevronDownIcon className="w-5 h-5" />
                 </Menu.Button>
@@ -63,7 +79,7 @@ const Customers = () => {
                       <button
                         className={`${
                           active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                        } group flex rounded-md items-center w-full p-2 text-sm`}
+                        } ${isActive("last7Days")} group flex rounded-md items-center w-full p-2 text-sm`}
                         onClick={() => handleFilterChange("last7Days")}
                       >
                         Last 7 Days
@@ -75,7 +91,7 @@ const Customers = () => {
                       <button
                         className={`${
                           active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                        } group flex rounded-md items-center w-full p-2 text-sm`}
+                        } ${isActive("last30Days")} group flex rounded-md items-center w-full p-2 text-sm`}
                         onClick={() => handleFilterChange("last30Days")}
                       >
                         Last 30 Days
@@ -87,7 +103,7 @@ const Customers = () => {
                       <button
                         className={`${
                           active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                        } group flex rounded-md items-center w-full p-2 text-sm`}
+                        } ${isActive("allTime")} group flex rounded-md items-center w-full p-2 text-sm`}
                         onClick={() => handleFilterChange("allTime")}
                       >
                         All Time
