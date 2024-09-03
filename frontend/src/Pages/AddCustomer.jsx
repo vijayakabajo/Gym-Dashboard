@@ -3,13 +3,10 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Select from "react-select";
-import { useNavigate } from 'react-router-dom';
-
-
+import { useNavigate } from "react-router-dom";
 
 // Logic Part
 const AddCustomer = () => {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -78,7 +75,8 @@ const AddCustomer = () => {
 
   const calculateTotal = (updatedFormData) => {
     let total = 0;
-    const { plan, sessionType, amountPaid, planCost, sessionCost } = updatedFormData;
+    const { plan, sessionType, amountPaid, planCost, sessionCost } =
+      updatedFormData;
 
     // Add plan amount if selected
     if (plan) {
@@ -103,9 +101,9 @@ const AddCustomer = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     const assignedEmployees = selectedEmployees.map((emp) => emp.value);
-  
+
     const dataToSend = {
       fullname: formData.fullname,
       emailId: formData.emailId,
@@ -118,17 +116,21 @@ const AddCustomer = () => {
       debt: formData.debt,
       assignedEmployees: assignedEmployees,
     };
-  
+
     if (showSessionOptions) {
       dataToSend.sessionType = formData.sessionType;
       dataToSend.sessionCost = formData.sessionCost;
     }
-  
+
     try {
-      const response = await axios.post("http://localhost:8000/api/customer", dataToSend, {
-        headers: { "Content-Type": "application/json" },
-      });
-  
+      const response = await axios.post(
+        "http://localhost:8000/api/customer",
+        dataToSend,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
       alert("Customer data submitted successfully!");
       navigate(`/client/${response.data._id}`, { state: response.data });
     } catch (error) {
@@ -223,7 +225,7 @@ const AddCustomer = () => {
                 name="planCost"
                 value={formData.planCost}
                 onChange={handleChange}
-                disabled={!formData.plan} // Disable if no plan selected
+                disabled={!formData.plan}
                 required
               />
             </Form.Group>
@@ -232,7 +234,7 @@ const AddCustomer = () => {
           <Form.Group controlId="formBasicShowSession" className="mb-3">
             <Form.Check
               type="checkbox"
-              label="Include Session Type"
+              label="Include Sessions"
               checked={showSessionOptions}
               onChange={handleCheckboxChange}
             />
@@ -247,7 +249,7 @@ const AddCustomer = () => {
                   name="sessionType"
                   value={formData.sessionType}
                   onChange={handleChange}
-                  disabled={!showSessionOptions} // Disable if session type not selected
+                  disabled={!showSessionOptions}
                 >
                   <option value="">Select Session</option>
                   <option value="1 session">1 Session</option>
@@ -269,11 +271,14 @@ const AddCustomer = () => {
                   name="sessionCost"
                   value={formData.sessionCost}
                   onChange={handleChange}
-                  disabled={!formData.sessionType} // Disable if no session selected
+                  disabled={!formData.sessionType}
                 />
               </Form.Group>
 
-              <Form.Group controlId="formBasicAssignedEmployees" className="w-full">
+              <Form.Group
+                controlId="formBasicAssignedEmployees"
+                className="w-full"
+              >
                 <Form.Label>Assigned Personal Trainer(s)</Form.Label>
                 <Select
                   isMulti
@@ -286,7 +291,7 @@ const AddCustomer = () => {
                   onChange={setSelectedEmployees}
                   className="basic-multi-select text-black"
                   classNamePrefix="select"
-                  isDisabled={!formData.sessionType} // Disable if no session selected
+                  isDisabled={!formData.sessionType}
                 />
               </Form.Group>
             </div>
@@ -325,10 +330,11 @@ const AddCustomer = () => {
               />
             </Form.Group>
           </div>
-
-          <Button variant="primary" type="submit" className="w-full">
-            Submit
-          </Button>
+          <div className="flex justify-center items- w-full mt-5">
+            <Button variant="primary" type="submit" className="w-1/2 lg:w-1/4">
+              Submit
+            </Button>
+          </div>
         </Form>
       </div>
     </div>
