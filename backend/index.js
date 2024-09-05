@@ -12,6 +12,7 @@ const customerRoutes = require("./routes/customerRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const exportRoutes = require("./routes/exportRoutes");
+const ptCustomerRoutes = require("./routes/ptCustomerRoutes");
 
 const app = express();
 
@@ -29,6 +30,7 @@ mongoose
 
 // app.use("/", authRoutes);
 app.use('/api/customer', customerRoutes);
+app.use('/api/ptcustomer', ptCustomerRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api', authRoutes); // login/logout

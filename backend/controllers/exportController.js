@@ -61,3 +61,37 @@ exports.handleEmployeeExport = async (req, res) => {
     res.status(500).send("Server error");
   }
 };
+
+//Export employees with sessions
+
+exports.handleCustomerWithSessionExport = async (req, res) => {
+  try {
+    const query = {
+      sessionType: { $ne: "0 Sessions" }
+    };
+    const customers = await Customer.find(query);
+
+    //convert to json then to worksheet
+    const customerData = customers.map((customer) => customer.toObject());
+    const worksheet = XLSX.utils.json_to_sheet(customerData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
+
+    //save
+    const filePath = path.join(__dirname, "customers.xlsx");
+    XLSX.writeFile(workbook, filePath);
+
+    //send the file
+    res.download(filePath, (err) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Could not download the file.");
+      }
+      //delete the file after sending
+      fs.unlinkSync(filePath);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+};

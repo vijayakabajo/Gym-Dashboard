@@ -2,7 +2,7 @@ import React from "react";
 import Item from "../Layout/Components/Item";
 // import { RiCustomerService2Line } from "react-icons/ri";
 import { BsPersonVcard } from "react-icons/bs";
-import { MdCurrencyRupee } from "react-icons/md";
+import { MdCurrencyRupee, MdGroupAdd } from "react-icons/md";
 import { HiOutlineUsers, HiXCircle } from "react-icons/hi";
 
 const DashBoard = () => {
@@ -16,8 +16,13 @@ const DashBoard = () => {
                 redirectURL: "/customers"
             }}/>
             <Item data={{
+                img: MdGroupAdd,
+                name: "Customers With PTs",
+                redirectURL: "/customerwithpt"
+            }}/>
+            <Item data={{
                 img: BsPersonVcard,
-                name: "Employees",
+                name: "Personal Trainers",
                 redirectURL: "/employees"
             }}/>
             <Item data={{

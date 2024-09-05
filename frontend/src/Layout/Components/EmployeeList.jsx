@@ -223,6 +223,8 @@ const EmployeeList = ({ searchQuery, filter }) => {
           Next
         </button>
       </div>
+
+      
        {/* Modal for displaying employee's customers */}
        <Modal isOpen={isModalOpen} onClose={closeModal}>
         {loadingCustomers ? (

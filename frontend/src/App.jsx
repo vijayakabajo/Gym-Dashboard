@@ -10,6 +10,7 @@ import Role from "./Pages/Role";
 import Signup from "./Pages/Signup";
 import Profile from "./Pages/Profile";
 import Expiration from "./Pages/Expiration"
+import CustomerWithPt from "./Pages/CustomerWithPt"
 import ClientInfo from "./Layout/Components/ClientInfo"
 import ProtectedRoute from "./Layout/Components/ProtectedRoute";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,6 +28,7 @@ function App() {
         {/*ProtectedRoutes */}
         <Route path="/" element={<ProtectedRoute Component={() => <Layout Maincontent={DashBoard} />} />} />
         <Route path="/customers" element={<ProtectedRoute Component={() => <Layout Maincontent={Customers} />} />} />
+        <Route path="/customerwithpt" element={<ProtectedRoute Component={() => <Layout Maincontent={CustomerWithPt} />} />} />
         <Route path="/employees" element={<ProtectedRoute Component={() => <Layout Maincontent={Employess} />} />} />
         <Route path="/revenue" element={<ProtectedRoute Component={() => <Layout Maincontent={Revenue} />} />} />
         <Route path="/addcustomer" element={<ProtectedRoute Component={() => <Layout Maincontent={AddCustomer} />} />} />

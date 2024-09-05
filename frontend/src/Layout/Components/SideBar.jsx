@@ -38,6 +38,14 @@ const SideBar = () => {
         </li>
         <li
           className={`p-1 py-2 rounded-lg px-3 cursor-pointer text-nowrap ${getActiveClass(
+            "/customerwithpt"
+          )}`}
+          onClick={() => navigate("/customerwithpt")}
+        >
+          Clients With PTs
+        </li>
+        <li
+          className={`p-1 py-2 rounded-lg px-3 cursor-pointer text-nowrap ${getActiveClass(
             "/employees"
           )}`}
           onClick={() => navigate("/employees")}

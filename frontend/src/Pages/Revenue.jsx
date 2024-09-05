@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+import {FaDownload } from "react-icons/fa";
 
 const RevenuePage = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -17,19 +18,20 @@ const RevenuePage = () => {
 
       // Determine the API URL based on whether we're fetching for the current month or a specific one
       const apiUrl =
-        selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear()
+        selectedDate.getMonth() === new Date().getMonth() &&
+        selectedDate.getFullYear() === new Date().getFullYear()
           ? `http://localhost:8000/api/customer/revenue`
           : `http://localhost:8000/api/customer/revenue?filter=specificMonth&month=${currentMonth}&year=${currentYear}`;
 
       const response = await axios.get(apiUrl);
-      console.log('API Response:', response.data);
+      console.log("API Response:", response.data);
 
       setRevenueData(response.data.revenueData || []);
       setTotalRevenue(response.data.totalRevenue || 0);
       setMembershipRevenue(response.data.membershipRevenue || 0);
       setSessionRevenue(response.data.sessionRevenue || 0);
     } catch (error) {
-      console.error('Error fetching revenue data:', error);
+      console.error("Error fetching revenue data:", error);
     }
   };
 
@@ -61,21 +63,37 @@ const RevenuePage = () => {
       </div>
 
       {/* Total Revenue Section */}
-      <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-bold">Total Revenue (In Cash)</h2>
-        <p className="text-4xl text-green-500 mt-2">₹{totalRevenue.toLocaleString()}</p>
+      <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div className="left">
+          <h2 className="text-2xl font-bold">Total Revenue (In Cash)</h2>
+          <p className="text-4xl text-green-500 mt-2">
+            ₹{totalRevenue.toLocaleString()}
+          </p>
+        </div>
+        <div>
+        <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+         onClick={""}
+         >
+              <FaDownload className="w-5 h-5" />
+              <span>Export</span>
+            </button>
+        </div>
       </div>
 
       {/* Membership Revenue Section */}
       <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6">
         <h2 className="text-2xl font-bold">Membership Revenue</h2>
-        <p className="text-4xl text-blue-500 mt-2">₹{membershipRevenue.toLocaleString()}</p>
+        <p className="text-4xl text-blue-500 mt-2">
+          ₹{membershipRevenue.toLocaleString()}
+        </p>
       </div>
 
       {/* Session Revenue Section */}
       <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6">
         <h2 className="text-2xl font-bold">PT / Sessions Revenue</h2>
-        <p className="text-4xl text-purple-500 mt-2">₹{sessionRevenue.toLocaleString()}</p>
+        <p className="text-4xl text-purple-500 mt-2">
+          ₹{sessionRevenue.toLocaleString()}
+        </p>
       </div>
 
       {/* Revenue Table Section */}
