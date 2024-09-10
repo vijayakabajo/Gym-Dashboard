@@ -56,7 +56,7 @@ const List = ({ searchQuery, filter }) => {
 
   const handleRemoveSession = async (id) => {
     if (role !== "admin") {
-      alert("You do not have permission to delete customers.");
+      alert("You do not have permission to remove sessions");
       return;
     }
 
@@ -119,7 +119,7 @@ const List = ({ searchQuery, filter }) => {
                 <tr key={customer._id}>
                   <td
                     onClick={() => openModal(customer)}
-                    className="px-3 py-2 whitespace-nowrap capitalize cursor-pointer hover:text-blue-400"
+                    className="px-3 py-2 whitespace-nowrap capitalize cursor-pointer hover:bg-stone-900 hover:bg-opacity-50"
                   >
                     {customer.fullname}
                   </td>
@@ -262,6 +262,9 @@ const List = ({ searchQuery, filter }) => {
                         </p>
                         <p>
                           <strong>Paid Amount:</strong> {selectedCustomer.amountPaid}
+                        </p>
+                        <p>
+                          <strong>Payment Mode:</strong> {selectedCustomer.paymentMode}
                         </p>
                         <p>
                           <strong>Debt:</strong> {selectedCustomer.debt}

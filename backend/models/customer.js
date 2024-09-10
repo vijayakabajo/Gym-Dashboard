@@ -58,6 +58,11 @@ const customerSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    paymentMode: {
+      type: String,
+      default: "cash",
+      enum: ["cash", "online"],
+    },
     debt: {
       type: Number,
       default: function () {

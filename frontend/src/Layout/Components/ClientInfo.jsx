@@ -116,6 +116,9 @@ const ClientDetails = () => {
             <strong>Amount Paid:</strong> ₹{clientData.amountPaid}
           </p>
           <p>
+            <strong>Payment Mode:</strong> ₹{clientData.paymentMode}
+          </p>
+          <p>
             <strong>Debt:</strong> ₹{clientData.debt}
           </p>
           <p>

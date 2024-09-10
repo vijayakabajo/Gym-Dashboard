@@ -13,6 +13,7 @@ const employeeRoutes = require("./routes/employeeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const exportRoutes = require("./routes/exportRoutes");
 const ptCustomerRoutes = require("./routes/ptCustomerRoutes");
+const revenueRoutes = require("./routes/revenue2");
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use('/api/customer', customerRoutes);
 app.use('/api/ptcustomer', ptCustomerRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use('/api/export', exportRoutes);
+app.use("/api/revenue", revenueRoutes);
 app.use('/api', authRoutes); // login/logout
 
 app.listen(PORT, () => console.log(`Server started on port: ${PORT}`));

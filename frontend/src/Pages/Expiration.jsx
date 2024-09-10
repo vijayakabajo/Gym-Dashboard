@@ -48,7 +48,7 @@ const ExpiringMemberships = () => {
             return (
               <div
                 key={customer._id}
-                className="bg-gray-700 p-4 mb-4 rounded-lg shadow-md"
+                className="bg-stone-700 bg-opacity-45 p-4 mb-4 rounded-lg shadow-md"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>

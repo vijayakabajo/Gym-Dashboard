@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import {FaDownload } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
+import fileDownload from "js-file-download";
 
 const RevenuePage = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -10,13 +11,25 @@ const RevenuePage = () => {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [membershipRevenue, setMembershipRevenue] = useState(0);
   const [sessionRevenue, setSessionRevenue] = useState(0);
+  const [cashRevenue, setCashRevenue] = useState(0); // New state for cash revenue
+  const [onlineRevenue, setOnlineRevenue] = useState(0); // New state for online revenue
+
+  const fetchCashOnline = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/revenue/monthly-revenue");
+      console.log("Cash and Online API Response:", response.data);
+      setCashRevenue(response.data.cashRevenue || 0);
+      setOnlineRevenue(response.data.onlineRevenue || 0);
+    } catch (error) {
+      console.error("Error fetching cash and online revenue data:", error);
+    }
+  };
 
   const fetchRevenueData = async (selectedDate) => {
     try {
       const currentYear = selectedDate.getFullYear();
-      const currentMonth = selectedDate.getMonth() + 1; // getMonth() is 0-indexed
+      const currentMonth = selectedDate.getMonth() + 1;
 
-      // Determine the API URL based on whether we're fetching for the current month or a specific one
       const apiUrl =
         selectedDate.getMonth() === new Date().getMonth() &&
         selectedDate.getFullYear() === new Date().getFullYear()
@@ -37,7 +50,30 @@ const RevenuePage = () => {
 
   useEffect(() => {
     fetchRevenueData(startDate);
+    fetchCashOnline();
   }, [startDate]);
+
+  const handleAllCashExport = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/export/exportcustomers", {
+        responseType: "blob",
+      });
+      fileDownload(response.data, "customers.xlsx");
+    } catch (err) {
+      console.error("Error exporting customers:", err);
+    }
+  };
+
+  const handlePtExport = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/export/exportcustomerwithpt", {
+        responseType: "blob",
+      });
+      fileDownload(response.data, "customers_with_pt-Sessions.xlsx");
+    } catch (err) {
+      console.error("Error exporting customers with Sessions:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -65,64 +101,93 @@ const RevenuePage = () => {
       {/* Total Revenue Section */}
       <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
         <div className="left">
-          <h2 className="text-2xl font-bold">Total Revenue (In Cash)</h2>
+          <h2 className="text-2xl font-bold">Total Revenue</h2>
           <p className="text-4xl text-green-500 mt-2">
             ₹{totalRevenue.toLocaleString()}
           </p>
         </div>
         <div>
-        <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
-         onClick={""}
-         >
-              <FaDownload className="w-5 h-5" />
-              <span>Export</span>
-            </button>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+            onClick={handleAllCashExport}
+          >
+            <FaDownload className="w-5 h-5" />
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Cash Revenue Section */}
+      <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div className="left">
+          <h2 className="text-2xl font-bold">Cash Revenue</h2>
+          <p className="text-4xl text-green-500 mt-2">₹{cashRevenue.toLocaleString()}</p>
+        </div>
+        <div>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+            onClick={handleAllCashExport}
+          >
+            <FaDownload className="w-5 h-5" />
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Online Revenue Section */}
+      <div className="bg-stone-700 bg-opacity-80 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div className="left">
+          <h2 className="text-2xl font-bold">Online Revenue</h2>
+          <p className="text-4xl text-blue-500 mt-2">₹{onlineRevenue.toLocaleString()}</p>
+        </div>
+        <div>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+            onClick={handleAllCashExport}
+          >
+            <FaDownload className="w-5 h-5" />
+            <span>Export</span>
+          </button>
         </div>
       </div>
 
       {/* Membership Revenue Section */}
-      <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-bold">Membership Revenue</h2>
-        <p className="text-4xl text-blue-500 mt-2">
-          ₹{membershipRevenue.toLocaleString()}
-        </p>
+      <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold">Membership Revenue</h2>
+          <p className="text-4xl text-blue-500 mt-2">
+            ₹{membershipRevenue.toLocaleString()}
+          </p>
+        </div>
+        <div>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+            onClick={handleAllCashExport}
+          >
+            <FaDownload className="w-5 h-5" />
+            <span>Export</span>
+          </button>
+        </div>
       </div>
 
       {/* Session Revenue Section */}
-      <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-bold">PT / Sessions Revenue</h2>
-        <p className="text-4xl text-purple-500 mt-2">
-          ₹{sessionRevenue.toLocaleString()}
-        </p>
+      <div className="bg-stone-700 bg-opacity-70 text-white shadow-lg rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold">PT / Sessions Revenue</h2>
+          <p className="text-4xl text-purple-500 mt-2">
+            ₹{sessionRevenue.toLocaleString()}
+          </p>
+        </div>
+        <div>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-600"
+            onClick={handlePtExport}
+          >
+            <FaDownload className="w-5 h-5" />
+            <span>Export</span>
+          </button>
+        </div>
       </div>
-
-      {/* Revenue Table Section */}
-      {/* <div className="bg-stone-700 bg-opacity-50 text-white shadow-lg rounded-lg overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Customer
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Revenue
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-stone-700 bg-opacity-50 divide-y divide-gray-200">
-            {revenueData.map((data, index) => (
-              <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap">{data.customer}</td>
-                <td className="px-6 py-4 whitespace-nowrap">₹{(data.monthlyRevenue || 0).toLocaleString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{data.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div> */}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import Form from "react-bootstrap/Form";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 
-// Logic Part
 const AddCustomer = () => {
   const navigate = useNavigate();
 
@@ -22,6 +21,7 @@ const AddCustomer = () => {
     totalAmount: 0,
     amountPaid: 0,
     debt: 0,
+    paymentMode: "cash", // Added new state for payment mode
   });
 
   const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -50,7 +50,6 @@ const AddCustomer = () => {
       [name]: value,
     }));
 
-    // Calculate totals only when the relevant fields change
     if (
       name === "planCost" ||
       name === "sessionCost" ||
@@ -63,7 +62,6 @@ const AddCustomer = () => {
   const handleCheckboxChange = (event) => {
     setShowSessionOptions(event.target.checked);
 
-    // If unchecking the session options, recalculate total without session cost
     if (!event.target.checked) {
       calculateTotal({
         ...formData,
@@ -78,20 +76,16 @@ const AddCustomer = () => {
     const { plan, sessionType, amountPaid, planCost, sessionCost } =
       updatedFormData;
 
-    // Add plan amount if selected
     if (plan) {
       total += parseFloat(planCost) || 0;
     }
 
-    // Add session amount if selected
     if (sessionType) {
       total += parseFloat(sessionCost) || 0;
     }
 
-    // Calculate the debt
     const debt = total - (amountPaid ? parseFloat(amountPaid) : 0);
 
-    // Update the formData state
     setFormData((prevState) => ({
       ...prevState,
       totalAmount: total,
@@ -114,6 +108,7 @@ const AddCustomer = () => {
       totalAmount: formData.totalAmount,
       amountPaid: formData.amountPaid,
       debt: formData.debt,
+      paymentMode: formData.paymentMode, // Added payment mode to data
       assignedEmployees: assignedEmployees,
     };
 
@@ -297,7 +292,7 @@ const AddCustomer = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
             <Form.Group controlId="formBasicTotalAmount" className="w-full">
               <Form.Label>Total Amount</Form.Label>
               <Form.Control
@@ -319,6 +314,19 @@ const AddCustomer = () => {
               />
             </Form.Group>
 
+            <Form.Group controlId="formBasicPaymentMode" className="w-full">
+              <Form.Label>Payment Mode</Form.Label>
+              <Form.Control
+                as="select"
+                name="paymentMode"
+                value={formData.paymentMode}
+                onChange={handleChange}
+              >
+                <option value="cash">Cash</option>
+                <option value="online">Online</option>
+              </Form.Control>
+            </Form.Group>
+
             <Form.Group controlId="formBasicDebt" className="w-full">
               <Form.Label>Debt</Form.Label>
               <Form.Control
@@ -330,6 +338,7 @@ const AddCustomer = () => {
               />
             </Form.Group>
           </div>
+
           <div className="flex justify-center items- w-full mt-5">
             <Button variant="primary" type="submit" className="w-1/2 lg:w-1/4">
               Submit

@@ -72,9 +72,9 @@ exports.getAllCustomers = async (req, res) => {
     } 
 
     // Otherwise, paginate the results
-    const pageNum = parseInt(page, 10);
+    const pageNum = parseInt(page, 10);   //parsing base 10 
     const limitNum = parseInt(limit, 10);
-    const skip = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;   //skips prev page's data
 
     const [customers, totalCustomers] = await Promise.all([
       Customer.find(query)
@@ -94,10 +94,6 @@ exports.getAllCustomers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
-
 
 
 // Get a customer by ID
@@ -226,21 +222,6 @@ exports.getExpiringMemberships = async (req, res) => {
     res.status(200).json(expiringCustomers);
   } catch (error) {
     console.error("Error fetching expiring memberships:", error);
-    res.status(500).json({ error: "Failed to fetch expiring memberships" });
-  }
-};
-
-exports.getExpiringMemberships = async (req, res) => {
-  try {
-    const today = new Date();
-    const tenDaysFromNow = new Date(today.setDate(today.getDate() + 10));
-
-    const expiringCustomers = await Customer.find({
-      membershipEndDate: { $gte: today, $lte: tenDaysFromNow },
-    });
-
-    res.status(200).json(expiringCustomers);
-  } catch (err) {
     res.status(500).json({ error: "Failed to fetch expiring memberships" });
   }
 };

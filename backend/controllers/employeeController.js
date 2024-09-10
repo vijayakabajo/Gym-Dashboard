@@ -74,9 +74,6 @@ exports.getAllEmployees = async (req, res) => {
 
 
 
-
-
-
 // Get an employee by ID
 exports.getEmployeeById = async (req, res) => {
   try {
@@ -123,6 +120,8 @@ exports.deleteAllEmployee = async (req, res) => {
   }
 };
 
+
+//get customers under employees
 exports.getCustomersByEmployee = async (req, res) => {
   try {
     const { employeeId } = req.params;
@@ -140,10 +139,13 @@ exports.getCustomersByEmployee = async (req, res) => {
   }
 };
 
+
+
+
 //Customer Mapping
 exports.assignCustomerToEmployee = async (req, res) => {
   try {
-    const { customerId, employeeId } = req.body;
+    const { customerId, employeeId, sessionType, sessionCost, paidCost } = req.body;
 
     // Find the customer
     const customer = await Customer.findById(customerId);
@@ -159,13 +161,25 @@ exports.assignCustomerToEmployee = async (req, res) => {
 
     // Add the employee to the customer's assignedEmployees array
     customer.assignedEmployees.push(employeeId);
+
+    // Update the sessionType and sessionCost
+    customer.sessionType = sessionType;
+    customer.sessionCost = sessionCost;
+
+    // Update the totalAmount, amountPaid, and debt
+    customer.totalAmount += sessionCost;
+    customer.amountPaid += paidCost;
+    customer.debt = customer.totalAmount - customer.amountPaid;
+
+    // Save the updated customer
     await customer.save();
 
-    res.status(200).json({ message: "Employee assigned to customer successfully", customer });
+    res.status(200).json({ message: "Employee and payment details updated successfully", customer });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
