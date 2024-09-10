@@ -32,7 +32,7 @@ const AddCustomer = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/employee?all=true"
+          "https://fitpreneurs.onrender.com/api/employee?all=true"
         );
         setEmployees(response.data.employees.reverse());
       } catch (error) {
@@ -119,7 +119,7 @@ const AddCustomer = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/customer",
+        "https://fitpreneurs.onrender.com/api/customer",
         dataToSend,
         {
           headers: { "Content-Type": "application/json" },

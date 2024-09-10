@@ -16,7 +16,7 @@ const RevenuePage = () => {
 
   const fetchCashOnline = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/revenue/monthly-revenue");
+      const response = await axios.get("https://fitpreneurs.onrender.com/api/revenue/monthly-revenue");
       console.log("Cash and Online API Response:", response.data);
       setCashRevenue(response.data.cashRevenue || 0);
       setOnlineRevenue(response.data.onlineRevenue || 0);
@@ -33,8 +33,8 @@ const RevenuePage = () => {
       const apiUrl =
         selectedDate.getMonth() === new Date().getMonth() &&
         selectedDate.getFullYear() === new Date().getFullYear()
-          ? `http://localhost:8000/api/customer/revenue`
-          : `http://localhost:8000/api/customer/revenue?filter=specificMonth&month=${currentMonth}&year=${currentYear}`;
+          ? `https://fitpreneurs.onrender.com/api/customer/revenue`
+          : `https://fitpreneurs.onrender.com/api/customer/revenue?filter=specificMonth&month=${currentMonth}&year=${currentYear}`;
 
       const response = await axios.get(apiUrl);
       console.log("API Response:", response.data);
@@ -55,7 +55,7 @@ const RevenuePage = () => {
 
   const handleAllCashExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/exportcustomers", {
+      const response = await axios.get("https://fitpreneurs.onrender.com/api/export/exportcustomers", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers.xlsx");
@@ -66,7 +66,7 @@ const RevenuePage = () => {
 
   const handlePtExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/exportcustomerwithpt", {
+      const response = await axios.get("https://fitpreneurs.onrender.com/api/export/exportcustomerwithpt", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers_with_pt-Sessions.xlsx");
