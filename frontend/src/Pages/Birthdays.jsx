@@ -14,7 +14,27 @@ const UpcomingBirthdays = () => {
       const response = await axios.get(
         "http://localhost:8000/api/customer/upcoming-birthdays"
       );
-      setCustomersWithBirthdays(response.data);
+      
+      // Sort customers by nearest birthday
+      const sortedCustomers = response.data.map((customer) => {
+        const today = moment().startOf('day'); // Start of today's date
+        const dob = moment(customer.dateOfBirth); // Customer's birthday
+        const currentYearDob = dob.clone().year(today.year()); // Birthday this year
+
+        // If the birthday has already passed this year, set it to next year
+        if (currentYearDob.isBefore(today, 'day')) {
+          currentYearDob.add(1, 'year');
+        }
+
+        // Calculate the number of days until the birthday
+        const daysUntilBirthday = currentYearDob.diff(today, "days");
+
+        // Attach the daysUntilBirthday to the customer object for sorting
+        return { ...customer, daysUntilBirthday };
+      })
+      .sort((a, b) => a.daysUntilBirthday - b.daysUntilBirthday); // Sort by nearest birthday
+
+      setCustomersWithBirthdays(sortedCustomers);
     } catch (error) {
       console.error("Error fetching upcoming birthdays", error);
     }
@@ -34,23 +54,19 @@ const UpcomingBirthdays = () => {
 
         {customersWithBirthdays.length > 0 ? (
           customersWithBirthdays.map((customer) => {
-            const today = moment().startOf('day'); // Start of today's date
-            const dob = moment(customer.dateOfBirth); // Customer's birthday
-            const currentYearDob = dob.clone().year(today.year()); // Birthday in current year
+            const today = moment().startOf('day');
+            const dob = moment(customer.dateOfBirth);
+            const currentYearDob = dob.clone().year(today.year());
 
-            // If the birthday has already passed this year, use next year
+            // If the birthday has already passed this year, set it to next year
             if (currentYearDob.isBefore(today, 'day')) {
               currentYearDob.add(1, 'year');
             }
 
             const birthdayFormatted = currentYearDob.format("MMMM Do");
-            const age = today.year() - dob.year(); // Age calculation
-
-            // Check if the birthday is today
+            const age = today.year() - dob.year(); // Calculate age
             const isToday = currentYearDob.isSame(today, 'day');
-
-            // Calculate the number of days until the birthday
-            const daysUntilBirthday = currentYearDob.diff(today, "days");
+            const daysUntilBirthday = customer.daysUntilBirthday; // Already calculated for sorting
 
             return (
               <div
