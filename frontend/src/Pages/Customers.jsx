@@ -26,7 +26,7 @@ const Customers = () => {
 
   const handleExport = async () => {
     try {
-      const response = await axios.get("https://fitpreneurs.onrender.com/api/export/exportcustomers", {
+      const response = await axios.get("http://localhost:8000/api/export/exportcustomers", {
         responseType: "blob", // Important for file download
       });
       fileDownload(response.data, "customers.xlsx");

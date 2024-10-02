@@ -17,7 +17,7 @@ const List = ({ searchQuery, filter }) => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get("https://fitpreneurs.onrender.com/api/customer", {
+        const response = await axios.get("http://localhost:8000/api/customer", {
           params: {
             search: searchQuery,
             filter: filter,
@@ -64,7 +64,7 @@ const List = ({ searchQuery, filter }) => {
       return;
 
     try {
-      await axios.delete(`https://fitpreneurs.onrender.com/api/customer/${id}`);
+      await axios.delete(`http://localhost:8000/api/customer/${id}`);
       setCustomers(customers.filter((customer) => customer._id !== id));
       toast.success("Customer deleted successfully.");
     } catch (error) {
