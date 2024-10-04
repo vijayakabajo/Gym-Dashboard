@@ -33,7 +33,7 @@ const AddCustomer = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/employee?all=true"
+          "http://localhost:3000/api/employee?all=true"
         );
         setEmployees(response.data.employees.reverse());
       } catch (error) {
@@ -121,7 +121,7 @@ const AddCustomer = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/customer",
+        "http://localhost:3000/api/customer",
         dataToSend,
         {
           headers: { "Content-Type": "application/json" },
@@ -179,6 +179,7 @@ const AddCustomer = () => {
                   name="mobileNumber"
                   value={formData.mobileNumber}
                   onChange={handleChange}
+                  maxLength={10}
                   required
                 />
               </Form.Group>

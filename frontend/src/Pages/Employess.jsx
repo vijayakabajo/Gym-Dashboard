@@ -27,7 +27,7 @@ const Employees = () => {
 
   const handleExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/exportemployees", {
+      const response = await axios.get("http://localhost:3000/api/export/exportemployees", {
         responseType: "blob",
       });
       fileDownload(response.data, "employees.xlsx");

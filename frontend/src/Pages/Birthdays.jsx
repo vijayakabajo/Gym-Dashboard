@@ -12,7 +12,7 @@ const UpcomingBirthdays = () => {
   const fetchUpcomingBirthdays = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/customer/upcoming-birthdays"
+        "http://localhost:3000/api/customer/upcoming-birthdays"
       );
       
       // Sort customers by nearest birthday

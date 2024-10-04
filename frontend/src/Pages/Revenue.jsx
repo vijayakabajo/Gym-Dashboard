@@ -16,7 +16,7 @@ const RevenuePage = () => {
 
   const fetchCashOnline = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/revenue/monthly-revenue");
+      const response = await axios.get("http://localhost:3000/api/revenue/monthly-revenue");
       console.log("Cash and Online API Response:", response.data);
       setCashRevenue(response.data.cashRevenue || 0);
       setOnlineRevenue(response.data.onlineRevenue || 0);
@@ -33,8 +33,8 @@ const RevenuePage = () => {
       const apiUrl =
         selectedDate.getMonth() === new Date().getMonth() &&
         selectedDate.getFullYear() === new Date().getFullYear()
-          ? `http://localhost:8000/api/customer/revenue`
-          : `http://localhost:8000/api/customer/revenue?filter=specificMonth&month=${currentMonth}&year=${currentYear}`;
+          ? `http://localhost:3000/api/customer/revenue`
+          : `http://localhost:3000/api/customer/revenue?filter=specificMonth&month=${currentMonth}&year=${currentYear}`;
 
       const response = await axios.get(apiUrl);
       console.log("API Response:", response.data);
@@ -55,7 +55,7 @@ const RevenuePage = () => {
 
   const handleAllCashExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/exportcustomers", {
+      const response = await axios.get("http://localhost:3000/api/export/exportcustomers", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers.xlsx");
@@ -66,7 +66,7 @@ const RevenuePage = () => {
 
   const handlePtExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/exportcustomerwithpt", {
+      const response = await axios.get("http://localhost:3000/api/export/exportcustomerwithpt", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers_with_pt-Sessions.xlsx");
@@ -76,7 +76,7 @@ const RevenuePage = () => {
   };
   const handleCashExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/customerpaidcash", {
+      const response = await axios.get("http://localhost:3000/api/export/customerpaidcash", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers_paid_with_cash.xlsx");
@@ -86,7 +86,7 @@ const RevenuePage = () => {
   };
   const handleOnlineExport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/export/customerpaidonline", {
+      const response = await axios.get("http://localhost:3000/api/export/customerpaidonline", {
         responseType: "blob",
       });
       fileDownload(response.data, "customers_paid_online.xlsx");

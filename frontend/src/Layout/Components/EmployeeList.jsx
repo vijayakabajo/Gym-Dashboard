@@ -20,7 +20,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/employee", {
+        const response = await axios.get("http://localhost:3000/api/employee", {
           params: {
             search: searchQuery,
             filter: filter,
@@ -67,7 +67,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
       return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/employee/${id}`);
+      await axios.delete(`http://localhost:3000/api/employee/${id}`);
       setEmployees(employees.filter((employee) => employee._id !== id));
       toast.success("Employee deleted successfully.");
     } catch (error) {
@@ -81,7 +81,7 @@ const EmployeeList = ({ searchQuery, filter }) => {
     setSelectedEmployeeName(employee.fullname);
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/employee/${employee._id}/customers`
+        `http://localhost:3000/api/employee/${employee._id}/customers`
       );
       setSelectedEmployeeCustomers(response.data);
     } catch (error) {
